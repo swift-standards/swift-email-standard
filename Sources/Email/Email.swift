@@ -2,6 +2,7 @@
 import Foundation
 @_exported import RFC_2045
 @_exported import RFC_2046
+@_exported import RFC_5322
 
 /// A type-safe email message
 ///
@@ -53,7 +54,7 @@ public struct Email: Hashable, Sendable {
     public let body: Body
 
     /// Additional custom headers
-    public let headers: [String: String]
+    public let headers: [RFC_5322.HeaderName: String]
 
     /// Creates an email message
     ///
@@ -75,7 +76,7 @@ public struct Email: Hashable, Sendable {
         bcc: [EmailAddress]? = nil,
         subject: String,
         body: Body,
-        headers: [String: String] = [:]
+        headers: [RFC_5322.HeaderName: String] = [:]
     ) throws {
         guard !to.isEmpty else {
             throw Email.Error.emptyRecipients
@@ -94,11 +95,11 @@ public struct Email: Hashable, Sendable {
     /// All MIME headers including Content-Type
     ///
     /// Combines custom headers with MIME headers from the body.
-    public var allHeaders: [String: String] {
+    public var allHeaders: [RFC_5322.HeaderName: String] {
         var result = headers
-        result["Content-Type"] = body.contentType.headerValue
+        result[.contentType] = body.contentType.headerValue
         if let encoding = body.transferEncoding {
-            result["Content-Transfer-Encoding"] = encoding.headerValue
+            result[.contentTransferEncoding] = encoding.headerValue
         }
         return result
     }
@@ -153,10 +154,10 @@ extension Email {
     /// ```
     public enum Body: Hashable, Sendable {
         /// Plain text content (stored as UTF-8 encoded data)
-        case text(Data, charset: String)
+        case text(Data, charset: RFC_2045.Charset)
 
         /// HTML content (stored as UTF-8 encoded data)
-        case html(Data, charset: String)
+        case html(Data, charset: RFC_2045.Charset)
 
         /// Multipart message (text + HTML alternatives, attachments, etc.)
         case multipart(RFC_2046.Multipart)
@@ -168,14 +169,14 @@ extension Email {
                 return RFC_2045.ContentType(
                     type: "text",
                     subtype: "plain",
-                    parameters: ["charset": charset]
+                    parameters: ["charset": charset.rawValue]
                 )
 
             case .html(_, let charset):
                 return RFC_2045.ContentType(
                     type: "text",
                     subtype: "html",
-                    parameters: ["charset": charset]
+                    parameters: ["charset": charset.rawValue]
                 )
 
             case .multipart(let multipart):
@@ -236,7 +237,7 @@ extension Email.Body {
     ///   - content: The text content
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: A text email body
-    public static func text(_ content: String, charset: String = "UTF-8") -> Self {
+    public static func text(_ content: String, charset: RFC_2045.Charset = .utf8) -> Self {
         .text(Data(content.utf8), charset: charset)
     }
 
@@ -246,7 +247,7 @@ extension Email.Body {
     ///   - content: The HTML content
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: An HTML email body
-    public static func html(_ content: String, charset: String = "UTF-8") -> Self {
+    public static func html(_ content: String, charset: RFC_2045.Charset = .utf8) -> Self {
         .html(Data(content.utf8), charset: charset)
     }
 
@@ -256,7 +257,7 @@ extension Email.Body {
     ///   - content: The text content as data
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: A text email body
-    public static func textData(_ content: Data, charset: String = "UTF-8") -> Self {
+    public static func textData(_ content: Data, charset: RFC_2045.Charset = .utf8) -> Self {
         .text(content, charset: charset)
     }
 
@@ -266,7 +267,7 @@ extension Email.Body {
     ///   - content: The HTML content as data
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: An HTML email body
-    public static func htmlData(_ content: Data, charset: String = "UTF-8") -> Self {
+    public static func htmlData(_ content: Data, charset: RFC_2045.Charset = .utf8) -> Self {
         .html(content, charset: charset)
     }
 }
@@ -310,7 +311,7 @@ extension Email {
         from: EmailAddress,
         subject: String,
         text: String,
-        headers: [String: String] = [:]
+        headers: [RFC_5322.HeaderName: String] = [:]
     ) throws {
         try self.init(
             to: to,
@@ -335,7 +336,7 @@ extension Email {
         from: EmailAddress,
         subject: String,
         html: String,
-        headers: [String: String] = [:]
+        headers: [RFC_5322.HeaderName: String] = [:]
     ) throws {
         try self.init(
             to: to,
@@ -362,7 +363,7 @@ extension Email {
         subject: String,
         text: String,
         html: String,
-        headers: [String: String] = [:]
+        headers: [RFC_5322.HeaderName: String] = [:]
     ) throws {
         try self.init(
             to: to,
@@ -390,7 +391,7 @@ extension Email: Codable {
         self.bcc = try container.decodeIfPresent([EmailAddress].self, forKey: .bcc)
         self.subject = try container.decode(String.self, forKey: .subject)
         self.body = try container.decode(Body.self, forKey: .body)
-        self.headers = try container.decode([String: String].self, forKey: .headers)
+        self.headers = try container.decode([RFC_5322.HeaderName: String].self, forKey: .headers)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -422,12 +423,12 @@ extension Email.Body: Codable {
         switch type {
         case .text:
             let content = try container.decode(Data.self, forKey: .content)
-            let charset = try container.decode(String.self, forKey: .charset)
+            let charset = try container.decode(RFC_2045.Charset.self, forKey: .charset)
             self = .text(content, charset: charset)
 
         case .html:
             let content = try container.decode(Data.self, forKey: .content)
-            let charset = try container.decode(String.self, forKey: .charset)
+            let charset = try container.decode(RFC_2045.Charset.self, forKey: .charset)
             self = .html(content, charset: charset)
 
         case .multipart:

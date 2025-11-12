@@ -46,14 +46,16 @@ extension RFC_5322.Message {
         }
 
         // Generate Message-ID if not provided in headers
-        let messageId = email.headers["Message-ID"] ?? RFC_5322.Message.generateMessageId(from: from)
+        let messageId = email.headers[.messageId] ?? RFC_5322.Message.generateMessageId(from: from)
 
         // Get body data
         let bodyData = email.body.data
 
         // Prepare headers (exclude Message-ID as it's a dedicated field)
-        var additionalHeaders = email.headers
-        additionalHeaders.removeValue(forKey: "Message-ID")
+        // Convert HeaderName dictionary to String dictionary for RFC_5322.Message
+        var additionalHeaders: [String: String] = email.headers
+            .filter { $0.key != .messageId }
+            .reduce(into: [:]) { $0[$1.key.rawValue] = $1.value }
 
         // Add MIME headers from body
         additionalHeaders["Content-Type"] = email.body.contentType.headerValue

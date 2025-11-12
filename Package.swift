@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-standards/swift-emailaddress-type", from: "0.2.0"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2045", from: "0.1.0"),
+        .package(path: "../swift-rfc-2045"),
         .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.1.0"),
         .package(path: "../swift-rfc-5322")
     ],

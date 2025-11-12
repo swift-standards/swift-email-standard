@@ -1,5 +1,5 @@
-import Foundation
 @_exported import EmailAddress
+import Foundation
 @_exported import RFC_2045
 @_exported import RFC_2046
 
@@ -129,15 +129,19 @@ extension Email {
     /// Email body content
     ///
     /// Supports plain text, HTML, or multipart (text + HTML) content.
+    /// Content is stored as Data internally for efficiency, with String convenience methods.
     ///
     /// ## Example
     ///
     /// ```swift
-    /// // Plain text
+    /// // Plain text (String convenience)
     /// let body = Email.Body.text("Hello!")
     ///
-    /// // HTML
+    /// // HTML (String convenience)
     /// let body = Email.Body.html("<h1>Hello!</h1>")
+    ///
+    /// // Direct Data usage
+    /// let body = Email.Body.textData(myData, charset: "UTF-8")
     ///
     /// // Text + HTML alternative
     /// let body = try Email.Body.multipart(
@@ -148,11 +152,11 @@ extension Email {
     /// )
     /// ```
     public enum Body: Hashable, Sendable {
-        /// Plain text content
-        case text(String, charset: String = "UTF-8")
+        /// Plain text content (stored as UTF-8 encoded data)
+        case text(Data, charset: String)
 
-        /// HTML content
-        case html(String, charset: String = "UTF-8")
+        /// HTML content (stored as UTF-8 encoded data)
+        case html(Data, charset: String)
 
         /// Multipart message (text + HTML alternatives, attachments, etc.)
         case multipart(RFC_2046.Multipart)
@@ -195,11 +199,11 @@ extension Email {
         /// with boundaries.
         public func render() -> String {
             switch self {
-            case .text(let content, _):
-                return content
+            case .text(let data, _):
+                return String(data: data, encoding: .utf8) ?? ""
 
-            case .html(let content, _):
-                return content
+            case .html(let data, _):
+                return String(data: data, encoding: .utf8) ?? ""
 
             case .multipart(let multipart):
                 return multipart.render()
@@ -210,6 +214,82 @@ extension Email {
         public var content: String {
             render()
         }
+
+        /// The raw data content
+        public var data: Data {
+            switch self {
+            case .text(let data, _), .html(let data, _):
+                return data
+            case .multipart(let multipart):
+                return Data(multipart.render().utf8)
+            }
+        }
+    }
+}
+
+// MARK: - Body Convenience Constructors
+
+extension Email.Body {
+    /// Creates a plain text body from a String
+    ///
+    /// - Parameters:
+    ///   - content: The text content
+    ///   - charset: Character set (default: UTF-8)
+    /// - Returns: A text email body
+    public static func text(_ content: String, charset: String = "UTF-8") -> Self {
+        .text(Data(content.utf8), charset: charset)
+    }
+
+    /// Creates an HTML body from a String
+    ///
+    /// - Parameters:
+    ///   - content: The HTML content
+    ///   - charset: Character set (default: UTF-8)
+    /// - Returns: An HTML email body
+    public static func html(_ content: String, charset: String = "UTF-8") -> Self {
+        .html(Data(content.utf8), charset: charset)
+    }
+
+    /// Creates a plain text body from Data
+    ///
+    /// - Parameters:
+    ///   - content: The text content as data
+    ///   - charset: Character set (default: UTF-8)
+    /// - Returns: A text email body
+    public static func textData(_ content: Data, charset: String = "UTF-8") -> Self {
+        .text(content, charset: charset)
+    }
+
+    /// Creates an HTML body from Data
+    ///
+    /// - Parameters:
+    ///   - content: The HTML content as data
+    ///   - charset: Character set (default: UTF-8)
+    /// - Returns: An HTML email body
+    public static func htmlData(_ content: Data, charset: String = "UTF-8") -> Self {
+        .html(content, charset: charset)
+    }
+}
+
+// MARK: - ExpressibleByStringLiteral
+
+extension Email.Body: ExpressibleByStringLiteral {
+    /// Creates a plain text body from a string literal
+    ///
+    /// Enables convenient syntax: `body: "Hello, World!"` instead of `body: .text("Hello, World!")`
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let email = try Email(
+    ///     to: [EmailAddress("recipient@example.com")],
+    ///     from: EmailAddress("sender@example.com"),
+    ///     subject: "Test",
+    ///     body: "Hello, World!"  // Automatically becomes .text("Hello, World!")
+    /// )
+    /// ```
+    public init(stringLiteral value: String) {
+        self = .text(value)
     }
 }
 
@@ -341,12 +421,12 @@ extension Email.Body: Codable {
 
         switch type {
         case .text:
-            let content = try container.decode(String.self, forKey: .content)
+            let content = try container.decode(Data.self, forKey: .content)
             let charset = try container.decode(String.self, forKey: .charset)
             self = .text(content, charset: charset)
 
         case .html:
-            let content = try container.decode(String.self, forKey: .content)
+            let content = try container.decode(Data.self, forKey: .content)
             let charset = try container.decode(String.self, forKey: .charset)
             self = .html(content, charset: charset)
 
@@ -360,14 +440,14 @@ extension Email.Body: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {
-        case .text(let content, let charset):
+        case .text(let data, let charset):
             try container.encode(BodyType.text, forKey: .type)
-            try container.encode(content, forKey: .content)
+            try container.encode(data, forKey: .content)
             try container.encode(charset, forKey: .charset)
 
-        case .html(let content, let charset):
+        case .html(let data, let charset):
             try container.encode(BodyType.html, forKey: .type)
-            try container.encode(content, forKey: .content)
+            try container.encode(data, forKey: .content)
             try container.encode(charset, forKey: .charset)
 
         case .multipart(let multipart):

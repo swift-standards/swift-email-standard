@@ -12,14 +12,15 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "Email",
+            name: "Email Type",
             targets: ["Email"]
         )
     ],
     dependencies: [
         .package(url: "https://github.com/swift-standards/swift-emailaddress-type", from: "0.2.0"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2045", from: "0.0.1"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.0.1")
+        .package(url: "https://github.com/swift-standards/swift-rfc-2045", from: "0.1.0"),
+        .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.1.0"),
+        .package(path: "../swift-rfc-5322")
     ],
     targets: [
         .target(
@@ -27,7 +28,8 @@ let package = Package(
             dependencies: [
                 .product(name: "EmailAddress", package: "swift-emailaddress-type"),
                 .product(name: "RFC 2045", package: "swift-rfc-2045"),
-                .product(name: "RFC 2046", package: "swift-rfc-2046")
+                .product(name: "RFC 2046", package: "swift-rfc-2046"),
+                .product(name: "RFC_5322", package: "swift-rfc-5322")
             ]
         ),
         .testTarget(

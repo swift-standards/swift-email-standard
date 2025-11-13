@@ -31,7 +31,7 @@ import Foundation
 /// ```
 ///
 /// This module re-exports EmailAddress, RFC 2045, and RFC 2046 for convenience.
-public struct Email: Hashable, Sendable {
+public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
     /// Recipient addresses
     public let to: [EmailAddress]
 
@@ -384,6 +384,30 @@ extension Email {
 }
 
 // MARK: - Protocol Conformances
+
+extension Email {
+    /// A debug description of the email
+    ///
+    /// Provides a summary showing sender, recipients, and subject for debugging contexts.
+    public var debugDescription: String {
+        let recipients = to.map(\.addressValue).joined(separator: ", ")
+        var parts = ["From: \(from.addressValue)", "To: \(recipients)"]
+
+        if let replyTo = replyTo {
+            parts.append("Reply-To: \(replyTo.addressValue)")
+        }
+        if let cc = cc, !cc.isEmpty {
+            parts.append("CC: \(cc.map(\.addressValue).joined(separator: ", "))")
+        }
+        if let bcc = bcc, !bcc.isEmpty {
+            parts.append("BCC: \(bcc.map(\.addressValue).joined(separator: ", "))")
+        }
+
+        parts.append("Subject: \"\(subject)\"")
+
+        return parts.joined(separator: " ")
+    }
+}
 
 extension Email: Codable {
     enum CodingKeys: String, CodingKey {

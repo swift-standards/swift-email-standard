@@ -399,7 +399,10 @@ extension Email: Codable {
         self.bcc = try container.decodeIfPresent([EmailAddress].self, forKey: .bcc)
         self.subject = try container.decode(String.self, forKey: .subject)
         self.body = try container.decode(Body.self, forKey: .body)
-        self.additionalHeaders = try container.decode([RFC_5322.Header].self, forKey: .additionalHeaders)
+        self.additionalHeaders = try container.decode(
+            [RFC_5322.Header].self,
+            forKey: .additionalHeaders
+        )
     }
 
     public func encode(to encoder: Encoder) throws {

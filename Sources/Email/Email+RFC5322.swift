@@ -46,7 +46,8 @@ extension RFC_5322.Message {
         }
 
         // Generate Message-ID if not provided in additional headers
-        let messageId = email.additionalHeaders[.messageId] ?? RFC_5322.Message.generateMessageId(from: from)
+        let messageId =
+            email.additionalHeaders[.messageId] ?? RFC_5322.Message.generateMessageId(from: from)
 
         // Get body data
         let bodyData = email.body.data
@@ -55,19 +56,23 @@ extension RFC_5322.Message {
         var additionalHeaders = email.additionalHeaders.filter { $0.name != .messageId }
 
         // Add MIME headers from body
-        additionalHeaders.append(.init(name: .contentType, value: email.body.contentType.headerValue))
+        additionalHeaders.append(
+            .init(name: .contentType, value: email.body.contentType.headerValue)
+        )
         if let encoding = email.body.transferEncoding {
-            additionalHeaders.append(.init(name: .contentTransferEncoding, value: encoding.headerValue))
+            additionalHeaders.append(
+                .init(name: .contentTransferEncoding, value: encoding.headerValue)
+            )
         }
 
         self.init(
             from: from,
             to: to,
             cc: cc,
-            bcc: nil, // BCC is intentionally excluded from message headers
+            bcc: nil,  // BCC is intentionally excluded from message headers
             replyTo: replyTo,
             subject: email.subject,
-            date: Date(), // Current date for message generation
+            date: Date(),  // Current date for message generation
             messageId: messageId,
             body: bodyData,
             additionalHeaders: additionalHeaders

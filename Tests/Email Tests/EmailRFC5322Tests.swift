@@ -9,6 +9,7 @@ import EmailAddress
 import Foundation
 import RFC_5322
 import Testing
+
 @testable import Email
 
 @Suite("Email to RFC 5322 Message Conversion")
@@ -109,7 +110,7 @@ struct EmailRFC5322Tests {
             body: "Test",
             additionalHeaders: [
                 .init(name: "X-Custom-Header", value: "custom-value"),
-                .init(name: "X-Priority", value: "1")
+                .init(name: "X-Priority", value: "1"),
             ]
         )
 
@@ -154,6 +155,6 @@ struct EmailRFC5322Tests {
         #expect(emlContent.contains("Subject: "))
         #expect(emlContent.contains("Date: "))
         #expect(emlContent.contains("Message-ID: "))
-        #expect(emlContent.contains("\r\n\r\n")) // Headers/body separator
+        #expect(emlContent.contains("\r\n\r\n"))  // Headers/body separator
     }
 }

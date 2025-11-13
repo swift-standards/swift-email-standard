@@ -10,7 +10,7 @@ import Foundation
 import RFC_5322
 import Testing
 
-@testable import Email
+@testable import Email_Type
 
 @Suite("Email to RFC 5322 Message Conversion")
 struct EmailRFC5322Tests {

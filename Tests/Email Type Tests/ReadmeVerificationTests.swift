@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 
-@testable import Email
+@testable import Email_Type
 
 @Suite("README Verification")
 struct ReadmeVerificationTests {

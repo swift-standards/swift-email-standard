@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import EmailAddress
 import RFC_5322
 
 extension RFC_5322.Message {

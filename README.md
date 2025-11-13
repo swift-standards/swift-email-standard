@@ -156,9 +156,9 @@ public struct Email: Hashable, Sendable, Codable {
     public let bcc: [EmailAddress]?
     public let subject: String
     public let body: Body
-    public let headers: [String: String]
+    public let additionalHeaders: [RFC_5322.Header]
 
-    public var allHeaders: [String: String]
+    public var allHeaders: [RFC_5322.Header]
 }
 ```
 

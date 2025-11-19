@@ -30,9 +30,9 @@ struct `Email to RFC 5322 Message Conversion` {
         #expect(message.to.count == 1)
         #expect(message.to[0].address == "recipient@example.com")
         #expect(message.subject == "Test Email")
-        #expect(message.bodyString == "Hello, World!")
+        #expect(String(ascii: message.body) == "Hello, World!")
 
-        let rendered = message.render()
+        let rendered = String(message)
         #expect(rendered.contains("From: sender@example.com"))
         #expect(rendered.contains("To: recipient@example.com"))
         #expect(rendered.contains("Subject: Test Email"))
@@ -51,9 +51,9 @@ struct `Email to RFC 5322 Message Conversion` {
 
         let message = try RFC_5322.Message(from: email)
 
-        #expect(message.bodyString?.contains("<h1>Hello, World!</h1>") == true)
+        #expect(String(ascii: message.body)?.contains("<h1>Hello, World!</h1>") == true)
 
-        let rendered = message.render()
+        let rendered = String(message)
         #expect(rendered.contains("Content-Type: text/html"))
         #expect(rendered.contains("<h1>Hello, World!</h1>"))
     }
@@ -75,7 +75,7 @@ struct `Email to RFC 5322 Message Conversion` {
 
         let message = try RFC_5322.Message(from: email)
 
-        let rendered = message.render()
+        let rendered = String(message)
         #expect(rendered.contains("Content-Type: multipart/alternative"))
         #expect(rendered.contains("Plain text version"))
         #expect(rendered.contains("<p>HTML version</p>"))
@@ -99,7 +99,7 @@ struct `Email to RFC 5322 Message Conversion` {
         #expect(message.cc?.count == 1)
         #expect(message.cc?[0].address == "cc@example.com")
 
-        let rendered = message.render()
+        let rendered = String(message)
         #expect(rendered.contains("Reply-To: reply@example.com"))
         #expect(rendered.contains("Cc: cc@example.com"))
     }
@@ -120,7 +120,7 @@ struct `Email to RFC 5322 Message Conversion` {
 
         let message = try RFC_5322.Message(from: email)
 
-        let rendered = message.render()
+        let rendered = String(message)
         #expect(rendered.contains("X-Custom-Header: custom-value"))
         #expect(rendered.contains("X-Priority: 1"))
     }
@@ -153,7 +153,7 @@ struct `Email to RFC 5322 Message Conversion` {
         )
 
         let message = try RFC_5322.Message(from: email)
-        let emlContent = message.render()
+        let emlContent = String(message)
 
         // Verify .eml format
         #expect(emlContent.contains("From: "))

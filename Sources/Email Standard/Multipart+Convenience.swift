@@ -27,7 +27,7 @@ extension RFC_2046.Multipart {
     ///   - textContent: Plain text version
     ///   - htmlContent: HTML version
     /// - Returns: A multipart/alternative message
-    /// - Throws: `RFC_2046.MultipartError` if validation fails
+    /// - Throws: `RFC_2046.Multipart.Error` if validation fails
     public static func alternative(
         textContent: String,
         htmlContent: String
@@ -73,7 +73,7 @@ extension RFC_2046.Multipart {
     /// - Parameters:
     ///   - parts: Body parts in order
     /// - Returns: A multipart/mixed message
-    /// - Throws: `RFC_2046.MultipartError` if validation fails
+    /// - Throws: `RFC_2046.Multipart.Error` if validation fails
     public static func mixed(
         parts: [RFC_2046.BodyPart]
     ) throws -> Self {

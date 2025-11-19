@@ -2,11 +2,11 @@ import Testing
 
 @testable import Email_Standard
 
-@Suite("README Verification")
-struct ReadmeVerificationTests {
+@Suite
+struct `README Verification` {
 
-    @Test("Example from README: Simple HTML Email")
-    func exampleSimpleHTMLEmail() throws {
+    @Test
+    func `Example from README: Simple HTML Email`() throws {
         // From README line 36-44
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
@@ -21,8 +21,8 @@ struct ReadmeVerificationTests {
         #expect(email.subject == "Welcome!")
     }
 
-    @Test("Example from README: Plain Text Email")
-    func examplePlainTextEmail() throws {
+    @Test
+    func `Example from README: Plain Text Email`() throws {
         // From README line 49-56
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
@@ -36,8 +36,8 @@ struct ReadmeVerificationTests {
         #expect(email.body.content.contains("Hello, World!"))
     }
 
-    @Test("Example from README: Email with Text and HTML Alternatives")
-    func exampleTextAndHTMLAlternatives() throws {
+    @Test
+    func `Example from README: Email with Text and HTML Alternatives`() throws {
         // From README line 60-68
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
@@ -53,8 +53,8 @@ struct ReadmeVerificationTests {
         #expect(email.body.content.contains("<h1>HTML version</h1>"))
     }
 
-    @Test("Example from README: Email with Custom Headers")
-    func exampleCustomHeaders() throws {
+    @Test
+    func `Example from README: Email with Custom Headers`() throws {
         // From README line 88-99
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],

@@ -11,11 +11,11 @@ import Testing
 
 @testable import Email_Standard
 
-@Suite("Email to RFC 5322 Message Conversion")
-struct EmailRFC5322Tests {
+@Suite
+struct `Email to RFC 5322 Message Conversion` {
 
-    @Test("Convert simple text email to RFC 5322 Message")
-    func convertSimpleTextEmail() throws {
+    @Test
+    func `Convert simple text email to RFC 5322 Message`() throws {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -39,8 +39,8 @@ struct EmailRFC5322Tests {
         #expect(rendered.contains("Hello, World!"))
     }
 
-    @Test("Convert HTML email to RFC 5322 Message")
-    func convertHTMLEmail() throws {
+    @Test
+    func `Convert HTML email to RFC 5322 Message`() throws {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -58,8 +58,8 @@ struct EmailRFC5322Tests {
         #expect(rendered.contains("<h1>Hello, World!</h1>"))
     }
 
-    @Test("Convert multipart email to RFC 5322 Message")
-    func convertMultipartEmail() throws {
+    @Test
+    func `Convert multipart email to RFC 5322 Message`() throws {
         let multipart = try RFC_2046.Multipart.alternative(
             textContent: "Plain text version",
             htmlContent: "<p>HTML version</p>"
@@ -81,8 +81,8 @@ struct EmailRFC5322Tests {
         #expect(rendered.contains("<p>HTML version</p>"))
     }
 
-    @Test("Convert email with CC and Reply-To")
-    func convertEmailWithCCAndReplyTo() throws {
+    @Test
+    func `Convert email with CC and Reply-To`() throws {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -104,8 +104,8 @@ struct EmailRFC5322Tests {
         #expect(rendered.contains("Cc: cc@example.com"))
     }
 
-    @Test("Convert email with custom headers")
-    func convertEmailWithCustomHeaders() throws {
+    @Test
+    func `Convert email with custom headers`() throws {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -125,8 +125,8 @@ struct EmailRFC5322Tests {
         #expect(rendered.contains("X-Priority: 1"))
     }
 
-    @Test("Message-ID is generated if not provided")
-    func messageIdGeneration() throws {
+    @Test
+    func `Message-ID is generated if not provided`() throws {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -142,8 +142,8 @@ struct EmailRFC5322Tests {
         #expect(message.messageId.contains("@"))
     }
 
-    @Test("Can write message to .eml file")
-    func writeToEmlFile() throws {
+    @Test
+    func `Can write message to .eml file`() throws {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),

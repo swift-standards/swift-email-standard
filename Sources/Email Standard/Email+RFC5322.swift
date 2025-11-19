@@ -52,10 +52,12 @@ extension RFC_5322.Message {
 
         // Generate Message-ID if not provided in additional headers
         // TODO: Fix this later
-        let messageId = email.additionalHeaders[.messageId] ?? RFC_5322.Message.generateMessageId(
-            from: from,
-            uniqueId: "FIX TO DO LATER"
-        )
+        let messageId =
+            email.additionalHeaders[.messageId]
+            ?? RFC_5322.Message.generateMessageId(
+                from: from,
+                uniqueId: "FIX TO DO LATER"
+            )
 
         // Get body data
         let bodyData = email.body.data

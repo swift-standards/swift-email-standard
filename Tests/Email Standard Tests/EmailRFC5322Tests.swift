@@ -19,7 +19,7 @@ struct EmailRFC5322Tests {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test Email",
             body: "Hello, World!"  // ExpressibleByStringLiteral
         )
@@ -44,7 +44,7 @@ struct EmailRFC5322Tests {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "HTML Test",
             body: .html("<h1>Hello, World!</h1>")
         )
@@ -68,7 +68,7 @@ struct EmailRFC5322Tests {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Multipart Test",
             body: .multipart(multipart)
         )
@@ -88,7 +88,7 @@ struct EmailRFC5322Tests {
             from: EmailAddress("sender@example.com"),
             replyTo: EmailAddress("reply@example.com"),
             cc: [EmailAddress("cc@example.com")],
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test with CC",
             body: "Test body"
         )
@@ -109,7 +109,7 @@ struct EmailRFC5322Tests {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test",
             body: "Test",
             additionalHeaders: [
@@ -130,7 +130,7 @@ struct EmailRFC5322Tests {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test",
             body: "Test"
         )
@@ -147,7 +147,7 @@ struct EmailRFC5322Tests {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test Email",
             body: "Hello, World!"
         )

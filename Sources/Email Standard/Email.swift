@@ -47,7 +47,7 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
     public let bcc: [EmailAddress]?
 
     public let date: RFC_5322.DateTime
-    
+
     /// Email subject line
     public let subject: String
 

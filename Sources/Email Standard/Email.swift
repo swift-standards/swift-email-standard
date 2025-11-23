@@ -1,4 +1,4 @@
-@_exported import EmailAddress_Standard
+@_exported import EmailAddress
 @_exported import RFC_2045
 @_exported import RFC_2046
 @_exported import RFC_5322
@@ -82,7 +82,7 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
         cc: [EmailAddress]? = nil,
         bcc: [EmailAddress]? = nil,
         date: RFC_5322.DateTime,
-        subject: String,
+        subject: some StringProtocol,
         body: Body,
         additionalHeaders: [RFC_5322.Header] = []
     ) throws {
@@ -96,7 +96,7 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
         self.cc = cc
         self.bcc = bcc
         self.date = date
-        self.subject = subject
+        self.subject = String(subject)
         self.body = body
         self.additionalHeaders = additionalHeaders
     }
@@ -248,7 +248,7 @@ extension Email.Body {
     ///   - content: The text content
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: A text email body
-    public static func text(_ content: String, charset: RFC_2045.Charset = .utf8) -> Self {
+    public static func text(_ content: some StringProtocol, charset: RFC_2045.Charset = .utf8) -> Self {
         .text(Array(content.utf8), charset: charset)
     }
 
@@ -258,7 +258,7 @@ extension Email.Body {
     ///   - content: The HTML content
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: An HTML email body
-    public static func html(_ content: String, charset: RFC_2045.Charset = .utf8) -> Self {
+    public static func html(_ content: some StringProtocol, charset: RFC_2045.Charset = .utf8) -> Self {
         .html(Array(content.utf8), charset: charset)
     }
 
@@ -321,8 +321,8 @@ extension Email {
     public init(
         to: [EmailAddress],
         from: EmailAddress,
-        subject: String,
-        text: String,
+        subject: some StringProtocol,
+        text: some StringProtocol,
         date: RFC_5322.DateTime,
         additionalHeaders: [RFC_5322.Header] = []
     ) throws {
@@ -330,7 +330,7 @@ extension Email {
             to: to,
             from: from,
             date: date,
-            subject: subject,
+            subject: String(subject),
             body: .text(text),
             additionalHeaders: additionalHeaders
         )
@@ -349,8 +349,8 @@ extension Email {
     public init(
         to: [EmailAddress],
         from: EmailAddress,
-        subject: String,
-        html: String,
+        subject: some StringProtocol,
+        html: some StringProtocol,
         date: RFC_5322.DateTime,
         additionalHeaders: [RFC_5322.Header] = []
     ) throws {
@@ -358,7 +358,7 @@ extension Email {
             to: to,
             from: from,
             date: date,
-            subject: subject,
+            subject: String(subject),
             body: .html(html),
             additionalHeaders: additionalHeaders
         )
@@ -378,9 +378,9 @@ extension Email {
     public init(
         to: [EmailAddress],
         from: EmailAddress,
-        subject: String,
-        text: String,
-        html: String,
+        subject: some StringProtocol,
+        text: some StringProtocol,
+        html: some StringProtocol,
         date: RFC_5322.DateTime,
         additionalHeaders: [RFC_5322.Header] = []
     ) throws {
@@ -388,7 +388,7 @@ extension Email {
             to: to,
             from: from,
             date: date,
-            subject: subject,
+            subject: String(subject),
             body: .multipart(try .alternative(textContent: text, htmlContent: html)),
             additionalHeaders: additionalHeaders
         )
@@ -426,7 +426,7 @@ extension Email: Codable {
         case to, from, replyTo, cc, bcc, date, subject, body, additionalHeaders
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.to = try container.decode([EmailAddress].self, forKey: .to)
         self.from = try container.decode(EmailAddress.self, forKey: .from)
@@ -442,7 +442,7 @@ extension Email: Codable {
         )
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(to, forKey: .to)
         try container.encode(from, forKey: .from)
@@ -465,7 +465,7 @@ extension Email.Body: Codable {
         case text, html, multipart
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BodyType.self, forKey: .type)
 
@@ -486,7 +486,7 @@ extension Email.Body: Codable {
         }
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {

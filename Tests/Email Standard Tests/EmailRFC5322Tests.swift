@@ -5,10 +5,7 @@
 //  Created by Coen ten Thije Boonkkamp on 12/11/2025.
 //
 
-import EmailAddress_Standard
-import RFC_5322
 import Testing
-
 @testable import Email_Standard
 
 @Suite
@@ -30,7 +27,7 @@ struct `Email to RFC 5322 Message Conversion` {
         #expect(message.to.count == 1)
         #expect(message.to[0].address == "recipient@example.com")
         #expect(message.subject == "Test Email")
-        #expect(String(ascii: message.body) == "Hello, World!")
+        #expect(String.ascii(message.body) == "Hello, World!")
 
         let rendered = String(message)
         #expect(rendered.contains("From: sender@example.com"))
@@ -51,7 +48,7 @@ struct `Email to RFC 5322 Message Conversion` {
 
         let message = try RFC_5322.Message(from: email)
 
-        #expect(String(ascii: message.body)?.contains("<h1>Hello, World!</h1>") == true)
+        #expect(String.ascii(message.body)?.contains("<h1>Hello, World!</h1>") == true)
 
         let rendered = String(message)
         #expect(rendered.contains("Content-Type: text/html"))

@@ -29,8 +29,8 @@ extension RFC_2046.Multipart {
     /// - Returns: A multipart/alternative message
     /// - Throws: `RFC_2046.Multipart.Error` if validation fails
     public static func alternative(
-        textContent: String,
-        htmlContent: String
+        textContent: some StringProtocol,
+        htmlContent: some StringProtocol
     ) throws -> Self {
         try Self(
             subtype: .alternative,

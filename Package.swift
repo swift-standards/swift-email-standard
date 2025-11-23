@@ -27,24 +27,31 @@ let package = Package(
         .target(
             name: "Email Standard",
             dependencies: [
-                .product(name: "EmailAddress Standard", package: "swift-emailaddress-standard"),
+                .product(name: "EmailAddress", package: "swift-emailaddress-standard"),
                 .product(name: "RFC 2045", package: "swift-rfc-2045"),
                 .product(name: "RFC 2046", package: "swift-rfc-2046"),
-                .product(name: "RFC 4648", package: "swift-rfc-4648"),
-                .product(name: "RFC 5322", package: "swift-rfc-5322")
+                .product(name: "RFC_4648", package: "swift-rfc-4648"),
+                .product(name: "RFC_5322", package: "swift-rfc-5322")
             ]
         ),
         .testTarget(
-            name: "Email Standard Tests",
+            name: "Email Standard".tests,
             dependencies: ["Email Standard"]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
 
-for target in package.targets {
-    target.swiftSettings?.append(
-        contentsOf: [
-            .enableUpcomingFeature("MemberImportVisibility")
-        ]
-    )
+extension String {
+    var tests: Self { self + " Tests" }
+    var foundation: Self { self + " Foundation" }
+}
+
+for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+    let existing = target.swiftSettings ?? []
+    target.swiftSettings = existing + [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility")
+    ]
 }

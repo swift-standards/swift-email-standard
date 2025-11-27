@@ -7,4 +7,4 @@
 
 @_exported import RFC_5322
 @_exported import INCITS_4_1986
-@_exported import EmailAddress
+@_exported import EmailAddress_Standard

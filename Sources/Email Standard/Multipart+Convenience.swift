@@ -38,12 +38,12 @@ extension RFC_2046.Multipart {
                 .init(
                     contentType: .textPlainUTF8,
                     transferEncoding: .sevenBit,
-                    text: textContent
+                    text: String(textContent)
                 ),
                 .init(
                     contentType: .textHTMLUTF8,
                     transferEncoding: .sevenBit,
-                    text: htmlContent
+                    text: String(htmlContent)
                 ),
             ],
             boundary: .random()

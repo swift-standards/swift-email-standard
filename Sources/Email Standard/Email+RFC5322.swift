@@ -5,7 +5,7 @@
 //  Created by Coen ten Thije Boonkkamp on 12/11/2025.
 //
 
-import EmailAddress
+import EmailAddress_Standard
 import RFC_5322
 
 extension RFC_5322.Message {

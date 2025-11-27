@@ -26,7 +26,7 @@ This package provides a Swift type for representing email messages. It's built o
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/coenttb/swift-email-standard", branch: "main")
+    .package(url: "https://github.com/coenttb/swift-email-standard", from: "0.1.0")
 ]
 ```
 

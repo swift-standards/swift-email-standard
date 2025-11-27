@@ -1,4 +1,4 @@
-@_exported import EmailAddress
+@_exported import EmailAddress_Standard
 @_exported import RFC_2045
 @_exported import RFC_2046
 @_exported import RFC_5322

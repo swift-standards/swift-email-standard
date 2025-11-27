@@ -27,7 +27,7 @@ struct `Email to RFC 5322 Message Conversion` {
         #expect(message.to.count == 1)
         #expect(message.to[0].address == "recipient@example.com")
         #expect(message.subject == "Test Email")
-        #expect(String.ascii(message.body) == "Hello, World!")
+        #expect(String(ascii: message.body) == "Hello, World!")
 
         let rendered = String(message)
         #expect(rendered.contains("From: sender@example.com"))
@@ -48,7 +48,7 @@ struct `Email to RFC 5322 Message Conversion` {
 
         let message = try RFC_5322.Message(from: email)
 
-        #expect(String.ascii(message.body)?.contains("<h1>Hello, World!</h1>") == true)
+        #expect(String(ascii: message.body)?.contains("<h1>Hello, World!</h1>") == true)
 
         let rendered = String(message)
         #expect(rendered.contains("Content-Type: text/html"))
@@ -110,8 +110,8 @@ struct `Email to RFC 5322 Message Conversion` {
             subject: "Test",
             body: "Test",
             additionalHeaders: [
-                .init(name: "X-Custom-Header", value: "custom-value"),
-                .init(name: "X-Priority", value: "1"),
+                .init(name: .init("X-Custom-Header"), value: "custom-value"),
+                .init(name: .xPriority, value: 1),
             ]
         )
 
@@ -134,9 +134,9 @@ struct `Email to RFC 5322 Message Conversion` {
 
         let message = try RFC_5322.Message(from: email)
 
-        #expect(message.messageId.hasPrefix("<"))
-        #expect(message.messageId.hasSuffix("@example.com>"))
-        #expect(message.messageId.contains("@"))
+        #expect(message.messageId.description.hasPrefix("<"))
+        #expect(message.messageId.description.hasSuffix("@example.com>"))
+        #expect(message.messageId.description.contains("@"))
     }
 
     @Test

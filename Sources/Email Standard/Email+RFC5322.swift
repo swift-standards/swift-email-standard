@@ -68,7 +68,9 @@ extension RFC_5322.Message {
 
         // Add MIME headers from body
         // Convert content type description to header value
-        let contentTypeValue = try RFC_5322.Header.Value(ascii: email.body.contentType.description.utf8)
+        let contentTypeValue = try RFC_5322.Header.Value(
+            ascii: email.body.contentType.description.utf8
+        )
         additionalHeaders.append(
             .init(name: .contentType, value: contentTypeValue)
         )

@@ -13,7 +13,7 @@ struct `README Verification` {
             from: EmailAddress("sender@example.com"),
             subject: "Welcome!",
             html: "<h1>Welcome to our service!</h1>",
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200)
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
         )
 
         #expect(email.to.count == 1)
@@ -29,7 +29,7 @@ struct `README Verification` {
             from: EmailAddress("sender@example.com"),
             subject: "Hello",
             text: "Hello, World!",
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200)
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
         )
 
         #expect(email.subject == "Hello")
@@ -45,7 +45,7 @@ struct `README Verification` {
             subject: "Newsletter",
             text: "Plain text version of newsletter",
             html: "<h1>HTML version</h1><p>Newsletter content...</p>",
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200)
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
         )
 
         #expect(email.subject == "Newsletter")
@@ -61,7 +61,7 @@ struct `README Verification` {
             from: EmailAddress("sender@example.com"),
             subject: "Tracked Email",
             html: "<h1>Hello!</h1>",
-            date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             additionalHeaders: [
                 .init(
                     name: .init(__unchecked: (), rawValue: "X-Campaign-ID"),
@@ -74,7 +74,10 @@ struct `README Verification` {
             ]
         )
 
-        #expect(email.additionalHeaders[.init(__unchecked: (), rawValue: "X-Campaign-ID")] == "newsletter-2024")
+        #expect(
+            email.additionalHeaders[.init(__unchecked: (), rawValue: "X-Campaign-ID")]
+                == "newsletter-2024"
+        )
         #expect(email.additionalHeaders[.xMailer] == "MyApp 1.0")
     }
 }

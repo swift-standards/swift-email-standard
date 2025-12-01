@@ -28,6 +28,7 @@ extension RFC_2046.Boundary {
         let randomBytes = (0..<16).map { _ in UInt8.random(in: 0...255) }
         let hexBytes: [UInt8] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
         let hex = String(decoding: hexBytes, as: UTF8.self)
+        // swiftlint:disable:next force_try
         return try! Self("----=_Part_\(hex)")
     }
 }

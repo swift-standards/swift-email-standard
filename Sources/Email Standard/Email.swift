@@ -47,7 +47,7 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
     public let bcc: [EmailAddress]?
 
     public let date: RFC_5322.DateTime
-    
+
     /// Email subject line
     public let subject: String
 
@@ -250,7 +250,10 @@ extension Email.Body {
     ///   - content: The text content
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: A text email body
-    public static func text(_ content: some StringProtocol, charset: RFC_2045.Charset = .utf8) -> Self {
+    public static func text(
+        _ content: some StringProtocol,
+        charset: RFC_2045.Charset = .utf8
+    ) -> Self {
         .text(Array(content.utf8), charset: charset)
     }
 
@@ -260,7 +263,10 @@ extension Email.Body {
     ///   - content: The HTML content
     ///   - charset: Character set (default: UTF-8)
     /// - Returns: An HTML email body
-    public static func html(_ content: some StringProtocol, charset: RFC_2045.Charset = .utf8) -> Self {
+    public static func html(
+        _ content: some StringProtocol,
+        charset: RFC_2045.Charset = .utf8
+    ) -> Self {
         .html(Array(content.utf8), charset: charset)
     }
 

@@ -37,12 +37,10 @@ extension RFC_2046.Multipart {
             parts: [
                 .init(
                     contentType: .textPlainUTF8,
-                    transferEncoding: .sevenBit,
                     text: String(textContent)
                 ),
                 .init(
                     contentType: .textHTMLUTF8,
-                    transferEncoding: .sevenBit,
                     text: String(htmlContent)
                 ),
             ],

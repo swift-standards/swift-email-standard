@@ -108,9 +108,9 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
     /// determined from the `body` property.
     public var allHeaders: [RFC_5322.Header] {
         var result = additionalHeaders
-        result[.contentType] = body.contentType.headerValue
+        result[.contentType] = body.contentType.description
         if let encoding = body.transferEncoding {
-            result[.contentTransferEncoding] = encoding.headerValue
+            result[.contentTransferEncoding] = encoding.description
         }
         return result
     }
@@ -178,16 +178,18 @@ extension Email {
             switch self {
             case .text(_, let charset):
                 return RFC_2045.ContentType(
+                    __unchecked: (),
                     type: "text",
                     subtype: "plain",
-                    parameters: ["charset": charset.rawValue]
+                    parameters: [.charset: charset.rawValue]
                 )
 
             case .html(_, let charset):
                 return RFC_2045.ContentType(
+                    __unchecked: (),
                     type: "text",
                     subtype: "html",
-                    parameters: ["charset": charset.rawValue]
+                    parameters: [.charset: charset.rawValue]
                 )
 
             case .multipart(let multipart):
@@ -218,7 +220,7 @@ extension Email {
                 return String(decoding: data, as: UTF8.self)
 
             case .multipart(let multipart):
-                return multipart.render()
+                return String(multipart)
             }
         }
 
@@ -233,7 +235,7 @@ extension Email {
             case .text(let data, _), .html(let data, _):
                 return data
             case .multipart(let multipart):
-                return Array(multipart.render().utf8)
+                return [UInt8](multipart)
             }
         }
     }

@@ -26,7 +26,7 @@ extension RFC_2046.Boundary {
     /// - RFC 4648 Section 8: Base 16 (hex) encoding
     public static func random() -> Self {
         let randomBytes = (0..<16).map { _ in UInt8.random(in: 0...255) }
-        let hexBytes = RFC_4648.Hex.encode(randomBytes, uppercase: false)
+        let hexBytes: [UInt8] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
         let hex = String(decoding: hexBytes, as: UTF8.self)
         return try! Self("----=_Part_\(hex)")
     }

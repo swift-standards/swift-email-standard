@@ -63,12 +63,18 @@ struct `README Verification` {
             html: "<h1>Hello!</h1>",
             date: RFC_5322.DateTime(secondsSinceEpoch: 1609459200),
             additionalHeaders: [
-                .init(name: "X-Campaign-ID", value: "newsletter-2024"),
-                .init(name: "X-Mailer", value: "MyApp 1.0"),
+                .init(
+                    name: .init(__unchecked: (), rawValue: "X-Campaign-ID"),
+                    value: try .init(ascii: Array("newsletter-2024".utf8))
+                ),
+                .init(
+                    name: .xMailer,
+                    value: try .init(ascii: Array("MyApp 1.0".utf8))
+                ),
             ]
         )
 
-        #expect(email.additionalHeaders["X-Campaign-ID"] == "newsletter-2024")
-        #expect(email.additionalHeaders["X-Mailer"] == "MyApp 1.0")
+        #expect(email.additionalHeaders[.init(__unchecked: (), rawValue: "X-Campaign-ID")] == "newsletter-2024")
+        #expect(email.additionalHeaders[.xMailer] == "MyApp 1.0")
     }
 }

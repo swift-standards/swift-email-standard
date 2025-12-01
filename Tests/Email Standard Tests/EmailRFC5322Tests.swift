@@ -110,7 +110,7 @@ struct `Email to RFC 5322 Message Conversion` {
             subject: "Test",
             body: "Test",
             additionalHeaders: [
-                .init(name: .init("X-Custom-Header"), value: "custom-value"),
+                .init(name: .init(__unchecked: (), rawValue: "X-Custom-Header"), value: try .init(ascii: Array("custom-value".utf8))),
                 .init(name: .xPriority, value: 1),
             ]
         )

@@ -6,6 +6,7 @@
 //
 
 import EmailAddress_Standard
+import RFC_4648
 import RFC_5322
 
 extension RFC_5322.Message {
@@ -51,11 +52,13 @@ extension RFC_5322.Message {
         }
 
         // Generate Message-ID if not provided in additional headers
-        // TODO: Fix this later
-        let messageId = email.additionalHeaders[.messageId] ?? RFC_5322.Message.generateMessageId(
-            from: from,
-            uniqueId: "FIX TO DO LATER"
-        )
+        // Generate a unique ID from random bytes encoded as hex
+        let randomBytes = (0..<16).map { _ in UInt8.random(in: 0...255) }
+        let hexBytes: [UInt8] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
+        let uniqueId = String(decoding: hexBytes, as: UTF8.self)
+        // Use the sender's domain for the Message-ID domain part
+        let domain = from.domain
+        let messageId = RFC_5322.Message.ID(uniqueId: uniqueId, domain: domain)
 
         // Get body data
         let bodyData = email.body.data
@@ -64,12 +67,15 @@ extension RFC_5322.Message {
         var additionalHeaders = email.additionalHeaders.filter { $0.name != .messageId }
 
         // Add MIME headers from body
+        // Convert content type description to header value
+        let contentTypeValue = try RFC_5322.Header.Value(ascii: email.body.contentType.description.utf8)
         additionalHeaders.append(
-            .init(name: .contentType, value: email.body.contentType.headerValue)
+            .init(name: .contentType, value: contentTypeValue)
         )
         if let encoding = email.body.transferEncoding {
+            let encodingValue = try RFC_5322.Header.Value(ascii: encoding.description.utf8)
             additionalHeaders.append(
-                .init(name: .contentTransferEncoding, value: encoding.headerValue)
+                .init(name: .contentTransferEncoding, value: encodingValue)
             )
         }
 

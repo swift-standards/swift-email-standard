@@ -17,11 +17,11 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-emailaddress-standard", from: "0.4.2"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2045", from: "0.3.3"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.3.3"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-4648", from: "0.5.3"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-5322", from: "0.7.1")
+        .package(path: "../swift-emailaddress-standard"),
+        .package(path: "../swift-rfc-2045"),
+        .package(path: "../swift-rfc-2046"),
+        .package(path: "../swift-rfc-4648"),
+        .package(path: "../swift-rfc-5322")
     ],
     targets: [
         .target(

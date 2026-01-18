@@ -27,3 +27,4 @@ Thumbs.db
 
 # SwiftLint Remote Config Cache
 .swiftlint/RemoteConfigCache
+.build/

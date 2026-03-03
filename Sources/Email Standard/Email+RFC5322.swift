@@ -9,6 +9,18 @@ import EmailAddress_Standard
 import RFC_4648
 import RFC_5322
 
+// MARK: - Conversion Error
+
+extension Email {
+    /// Errors that can occur when converting an `Email` to an `RFC_5322.Message`.
+    public enum ConversionError: Swift.Error, Sendable {
+        /// An email address could not be converted to RFC 5322 format.
+        case address(EmailAddress.Error)
+        /// A header value could not be constructed.
+        case header(RFC_5322.Header.Value.Error)
+    }
+}
+
 extension RFC_5322.Message {
     /// Creates an RFC 5322 Message from an Email
     ///
@@ -31,24 +43,40 @@ extension RFC_5322.Message {
     ///
     /// - Parameter email: The Email to convert
     /// - Throws: If email addresses cannot be parsed or email is invalid
-    public init(from email: Email) throws {
+    public init(from email: Email) throws(Email.ConversionError) {
         // Convert from EmailAddress to RFC_5322.EmailAddress
-        let from = try RFC_5322.EmailAddress(email.from)
-        let to = try email.to.map { try RFC_5322.EmailAddress($0) }
+        let from: RFC_5322.EmailAddress
+        let to: [RFC_5322.EmailAddress]
+        let cc: [RFC_5322.EmailAddress]?
+        let bcc: [RFC_5322.EmailAddress]?
+        let replyTo: RFC_5322.EmailAddress?
 
-        // Convert optional CC addresses
-        let cc: [RFC_5322.EmailAddress]? = try email.cc.map { ccList in
-            try ccList.map { try RFC_5322.EmailAddress($0) }
-        }
+        do {
+            from = try RFC_5322.EmailAddress(email.from)
+            to = try email.to.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+                try RFC_5322.EmailAddress(addr)
+            }
 
-        // Convert optional BCC addresses
-        let bcc: [RFC_5322.EmailAddress]? = try email.bcc.map { bccList in
-            try bccList.map { try RFC_5322.EmailAddress($0) }
-        }
+            // Convert optional CC addresses
+            cc = try email.cc.map { (ccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
+                try ccList.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+                    try RFC_5322.EmailAddress(addr)
+                }
+            }
 
-        // Convert optional Reply-To address
-        let replyTo: RFC_5322.EmailAddress? = try email.replyTo.map {
-            try RFC_5322.EmailAddress($0)
+            // Convert optional BCC addresses
+            bcc = try email.bcc.map { (bccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
+                try bccList.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+                    try RFC_5322.EmailAddress(addr)
+                }
+            }
+
+            // Convert optional Reply-To address
+            replyTo = try email.replyTo.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+                try RFC_5322.EmailAddress(addr)
+            }
+        } catch {
+            throw .address(error)
         }
 
         // Generate Message-ID if not provided in additional headers
@@ -68,17 +96,21 @@ extension RFC_5322.Message {
 
         // Add MIME headers from body
         // Convert content type description to header value
-        let contentTypeValue = try RFC_5322.Header.Value(
-            ascii: email.body.contentType.description.utf8
-        )
-        additionalHeaders.append(
-            .init(name: .contentType, value: contentTypeValue)
-        )
-        if let encoding = email.body.transferEncoding {
-            let encodingValue = try RFC_5322.Header.Value(ascii: encoding.description.utf8)
-            additionalHeaders.append(
-                .init(name: .contentTransferEncoding, value: encodingValue)
+        do {
+            let contentTypeValue = try RFC_5322.Header.Value(
+                ascii: email.body.contentType.description.utf8
             )
+            additionalHeaders.append(
+                .init(name: .contentType, value: contentTypeValue)
+            )
+            if let encoding = email.body.transferEncoding {
+                let encodingValue = try RFC_5322.Header.Value(ascii: encoding.description.utf8)
+                additionalHeaders.append(
+                    .init(name: .contentTransferEncoding, value: encodingValue)
+                )
+            }
+        } catch {
+            throw .header(error)
         }
 
         self.init(

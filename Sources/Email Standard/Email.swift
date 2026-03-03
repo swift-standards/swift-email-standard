@@ -85,9 +85,9 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
         subject: some StringProtocol,
         body: Body,
         additionalHeaders: [RFC_5322.Header] = []
-    ) throws {
+    ) throws(Error) {
         guard !to.isEmpty else {
-            throw Email.Error.emptyRecipients
+            throw .emptyRecipients
         }
 
         self.to = to
@@ -123,6 +123,8 @@ extension Email {
     public enum Error: Swift.Error, Hashable, Sendable {
         /// The recipient list is empty
         case emptyRecipients
+        /// A multipart body could not be constructed
+        case multipart(RFC_2046.Multipart.Error)
     }
 }
 
@@ -131,6 +133,8 @@ extension Email.Error: CustomStringConvertible {
         switch self {
         case .emptyRecipients:
             return "Email must have at least one recipient in the 'to' field"
+        case .multipart(let error):
+            return "Failed to construct multipart body: \(error)"
         }
     }
 }
@@ -333,7 +337,7 @@ extension Email {
         text: some StringProtocol,
         date: RFC_5322.DateTime,
         additionalHeaders: [RFC_5322.Header] = []
-    ) throws {
+    ) throws(Error) {
         try self.init(
             to: to,
             from: from,
@@ -361,7 +365,7 @@ extension Email {
         html: some StringProtocol,
         date: RFC_5322.DateTime,
         additionalHeaders: [RFC_5322.Header] = []
-    ) throws {
+    ) throws(Error) {
         try self.init(
             to: to,
             from: from,
@@ -391,13 +395,19 @@ extension Email {
         html: some StringProtocol,
         date: RFC_5322.DateTime,
         additionalHeaders: [RFC_5322.Header] = []
-    ) throws {
+    ) throws(Error) {
+        let multipart: RFC_2046.Multipart
+        do {
+            multipart = try .alternative(textContent: text, htmlContent: html)
+        } catch {
+            throw .multipart(error)
+        }
         try self.init(
             to: to,
             from: from,
             date: date,
             subject: String(subject),
-            body: .multipart(try .alternative(textContent: text, htmlContent: html)),
+            body: .multipart(multipart),
             additionalHeaders: additionalHeaders
         )
     }

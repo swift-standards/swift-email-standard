@@ -18,10 +18,10 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../swift-emailaddress-standard"),
-        .package(path: "../swift-rfc-2045"),
-        .package(path: "../swift-rfc-2046"),
-        .package(path: "../swift-rfc-4648"),
-        .package(path: "../swift-rfc-5322")
+        .package(path: "../../swift-ietf/swift-rfc-2045"),
+        .package(path: "../../swift-ietf/swift-rfc-2046"),
+        .package(path: "../../swift-ietf/swift-rfc-4648"),
+        .package(path: "../../swift-ietf/swift-rfc-5322")
     ],
     targets: [
         .target(

@@ -19,7 +19,7 @@ jobs:
     name: macOS (Swift 6.2, debug)
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Select Xcode 26.0
         run: sudo xcode-select -s /Applications/Xcode_26.0.app
@@ -28,7 +28,7 @@ jobs:
         run: swift --version
 
       - name: Cache Swift packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .build
           key: macos-swift62-spm-${{ hashFiles('Package.swift', 'Package@*.swift') }}
@@ -63,10 +63,10 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:6.2
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Cache Swift packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .build
           key: linux-swift62-spm-${{ hashFiles('Package.swift', 'Package@*.swift') }}
@@ -83,10 +83,10 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:6.2
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Cache Swift packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .build
           key: linux-swift62-compat-spm-${{ hashFiles('Package.swift', 'Package@*.swift') }}

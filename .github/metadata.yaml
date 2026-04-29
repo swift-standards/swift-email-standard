@@ -1,0 +1,8 @@
+# .github/metadata.yaml
+# Triaged by AI-assisted bulk pass (2026-04-29).
+description: "Swift standard Email type composing internet message format types."
+topics:
+  - standards
+  - email
+  - type-safety
+homepage: "https://swift-institute.org"

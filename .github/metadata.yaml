@@ -1,6 +1,6 @@
 # .github/metadata.yaml
 # Triaged by AI-assisted bulk pass (2026-04-29).
-description: "Swift standard Email type composing internet message format types."
+description: "RFC 2045, 2046, and 5322 email message construction with MIME multipart support for Swift."
 topics:
   - standards
   - email

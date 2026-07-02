@@ -26,7 +26,7 @@ This package provides a Swift type for representing email messages. It's built o
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/coenttb/swift-email-standard", from: "0.1.0")
+    .package(url: "https://github.com/swift-standards/swift-email-standard", from: "0.4.3")
 ]
 ```
 
@@ -219,9 +219,9 @@ This package builds on these RFC standards:
 
 ## Related Packages
 
-- [swift-emailaddress-standard](https://github.com/coenttb/swift-emailaddress-standard) - Email address validation and RFC compliance
-- [swift-rfc-2045](https://github.com/coenttb/swift-rfc-2045) - MIME fundamentals
-- [swift-rfc-2046](https://github.com/coenttb/swift-rfc-2046) - MIME multipart support
+- [swift-emailaddress-standard](https://github.com/swift-standards/swift-emailaddress-standard) - Email address validation and RFC compliance
+- [swift-rfc-2045](https://github.com/swift-ietf/swift-rfc-2045) - MIME fundamentals
+- [swift-rfc-2046](https://github.com/swift-ietf/swift-rfc-2046) - MIME multipart support
 - [swift-subscriptions](https://github.com/coenttb/swift-subscriptions) - Subscription management with RFC 2369/8058 headers
 
 ## License

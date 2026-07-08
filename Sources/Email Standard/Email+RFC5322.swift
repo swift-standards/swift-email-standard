@@ -53,26 +53,32 @@ extension RFC_5322.Message {
 
         do {
             from = try RFC_5322.EmailAddress(email.from)
-            to = try email.to.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+            to = try email.to.map {
+                (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
                 try RFC_5322.EmailAddress(addr)
             }
 
             // Convert optional CC addresses
-            cc = try email.cc.map { (ccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
-                try ccList.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+            cc = try email.cc.map {
+                (ccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
+                try ccList.map {
+                    (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
                     try RFC_5322.EmailAddress(addr)
                 }
             }
 
             // Convert optional BCC addresses
-            bcc = try email.bcc.map { (bccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
-                try bccList.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+            bcc = try email.bcc.map {
+                (bccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
+                try bccList.map {
+                    (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
                     try RFC_5322.EmailAddress(addr)
                 }
             }
 
             // Convert optional Reply-To address
-            replyTo = try email.replyTo.map { (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
+            replyTo = try email.replyTo.map {
+                (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
                 try RFC_5322.EmailAddress(addr)
             }
         } catch {

@@ -87,8 +87,8 @@ extension RFC_5322.Message {
 
         // Generate Message-ID if not provided in additional headers
         // Generate a unique ID from random bytes encoded as hex
-        let randomBytes = (0..<16).map { _ in UInt8.random(in: 0...255) }
-        let hexBytes: [UInt8] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
+        let randomBytes = (0..<16).map { _ in Byte(UInt8.random(in: 0...255)) }
+        let hexBytes: [ASCII.Code] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
         let uniqueId = String(decoding: hexBytes, as: UTF8.self)
         // Use the sender's domain for the Message-ID domain part
         let domain = from.domain
@@ -104,13 +104,13 @@ extension RFC_5322.Message {
         // Convert content type description to header value
         do {
             let contentTypeValue = try RFC_5322.Header.Value(
-                ascii: email.body.contentType.description.utf8
+                ascii: [Byte](email.body.contentType.description.utf8)
             )
             additionalHeaders.append(
                 .init(name: .contentType, value: contentTypeValue)
             )
             if let encoding = email.body.transferEncoding {
-                let encodingValue = try RFC_5322.Header.Value(ascii: encoding.description.utf8)
+                let encodingValue = try RFC_5322.Header.Value(ascii: [Byte](encoding.description.utf8))
                 additionalHeaders.append(
                     .init(name: .contentTransferEncoding, value: encodingValue)
                 )

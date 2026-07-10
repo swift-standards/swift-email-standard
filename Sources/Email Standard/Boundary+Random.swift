@@ -25,8 +25,8 @@ extension RFC_2046.Boundary {
     /// - RFC 2046 Section 5.1.1: Boundary delimiter requirements
     /// - RFC 4648 Section 8: Base 16 (hex) encoding
     public static func random() -> Self {
-        let randomBytes = (0..<16).map { _ in UInt8.random(in: 0...255) }
-        let hexBytes: [UInt8] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
+        let randomBytes = (0..<16).map { _ in Byte(UInt8.random(in: 0...255)) }
+        let hexBytes: [ASCII.Code] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
         let hex = String(decoding: hexBytes, as: UTF8.self)
         // swiftlint:disable:next force_try
         return try! Self("----=_Part_\(hex)")

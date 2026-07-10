@@ -32,18 +32,28 @@ extension RFC_2046.Multipart {
         textContent: some StringProtocol,
         htmlContent: some StringProtocol
     ) throws(Error) -> Self {
-        try Self(
-            subtype: .alternative,
-            parts: [
-                .init(
+        let parts: [RFC_2046.BodyPart]
+        do {
+            parts = [
+                try .init(
                     contentType: .textPlainUTF8,
                     text: String(textContent)
                 ),
-                .init(
+                try .init(
                     contentType: .textHTMLUTF8,
                     text: String(htmlContent)
                 ),
-            ],
+            ]
+        } catch {
+            // BodyPart's convenience init throws `RFC_2046.BodyPart.Headers.Error`,
+            // which is nested inside `Multipart.Error.invalidBodyPart(_:)`'s String
+            // payload — mirrors the `.header`/`.address`/`.multipart` catch-and-wrap
+            // pattern used in Email+RFC5322.swift and Email.swift.
+            throw .invalidBodyPart(error.description)
+        }
+        return try Self(
+            subtype: .alternative,
+            parts: parts,
             boundary: .random()
         )
     }

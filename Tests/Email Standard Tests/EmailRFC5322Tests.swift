@@ -28,7 +28,7 @@ struct `Email to RFC 5322 Message Conversion` {
         #expect(message.to.count == 1)
         #expect(message.to[0].address == "recipient@example.com")
         #expect(message.subject == "Test Email")
-        #expect(String(ascii: message.body) == "Hello, World!")
+        #expect(String(decoding: message.body, as: UTF8.self) == "Hello, World!")
 
         let rendered = String(message)
         #expect(rendered.contains("From: sender@example.com"))
@@ -49,7 +49,7 @@ struct `Email to RFC 5322 Message Conversion` {
 
         let message = try RFC_5322.Message(from: email)
 
-        #expect(String(ascii: message.body)?.contains("<h1>Hello, World!</h1>") == true)
+        #expect(String(decoding: message.body, as: UTF8.self).contains("<h1>Hello, World!</h1>"))
 
         let rendered = String(message)
         #expect(rendered.contains("Content-Type: text/html"))

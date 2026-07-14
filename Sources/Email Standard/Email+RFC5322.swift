@@ -110,7 +110,9 @@ extension RFC_5322.Message {
                 .init(name: .contentType, value: contentTypeValue)
             )
             if let encoding = email.body.transferEncoding {
-                let encodingValue = try RFC_5322.Header.Value(ascii: [Byte](encoding.description.utf8))
+                let encodingValue = try RFC_5322.Header.Value(
+                    ascii: [Byte](encoding.description.utf8)
+                )
                 additionalHeaders.append(
                     .init(name: .contentTransferEncoding, value: encodingValue)
                 )

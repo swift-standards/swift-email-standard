@@ -18,6 +18,8 @@ extension Email {
         case address(EmailAddress.Error)
         /// A header value could not be constructed.
         case header(RFC_5322.Header.Value.Error)
+        /// The message could not be constructed (subject/MIME-version validation).
+        case message(RFC_5322.Message.Error)
     }
 }
 
@@ -121,17 +123,21 @@ extension RFC_5322.Message {
             throw .header(error)
         }
 
-        self.init(
-            from: from,
-            to: to,
-            cc: cc,
-            bcc: bcc,  // Stored for SMTP envelope; excluded from rendered message headers
-            replyTo: replyTo,
-            date: email.date,
-            subject: email.subject,
-            messageId: messageId,
-            body: Array(bodyData),
-            additionalHeaders: additionalHeaders
-        )
+        do {
+            try self.init(
+                from: from,
+                to: to,
+                cc: cc,
+                bcc: bcc,  // Stored for SMTP envelope; excluded from rendered message headers
+                replyTo: replyTo,
+                date: email.date,
+                subject: email.subject,
+                messageId: messageId,
+                body: Array(bodyData),
+                additionalHeaders: additionalHeaders
+            )
+        } catch {
+            throw .message(error)
+        }
     }
 }

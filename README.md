@@ -30,6 +30,17 @@ dependencies: [
 ]
 ```
 
+Add the product to your target:
+
+```swift
+.target(
+    name: "App",
+    dependencies: [
+        .product(name: "Email Standard", package: "swift-email-standard")
+    ]
+)
+```
+
 ## Usage
 
 ### Simple HTML Email

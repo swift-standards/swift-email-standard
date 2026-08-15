@@ -133,6 +133,7 @@ extension Email.Error: CustomStringConvertible {
         switch self {
         case .emptyRecipients:
             return "Email must have at least one recipient in the 'to' field"
+
         case .multipart(let error):
             return "Failed to construct multipart body: \(error)"
         }
@@ -206,6 +207,7 @@ extension Email {
             switch self {
             case .text, .html:
                 return .sevenBit
+
             case .multipart:
                 return nil  // Multipart doesn't have transfer encoding at top level
             }
@@ -238,6 +240,7 @@ extension Email {
             switch self {
             case .text(let data, _), .html(let data, _):
                 return data
+
             case .multipart(let multipart):
                 return [UInt8](multipart)
             }
@@ -423,13 +426,13 @@ extension Email {
         let recipients = to.map(\.address).joined(separator: ", ")
         var parts = ["From: \(from.address)", "To: \(recipients)"]
 
-        if let replyTo = replyTo {
+        if let replyTo {
             parts.append("Reply-To: \(replyTo.address)")
         }
-        if let cc = cc, !cc.isEmpty {
+        if let cc, !cc.isEmpty {
             parts.append("CC: \(cc.map(\.address).joined(separator: ", "))")
         }
-        if let bcc = bcc, !bcc.isEmpty {
+        if let bcc, !bcc.isEmpty {
             parts.append("BCC: \(bcc.map(\.address).joined(separator: ", "))")
         }
 

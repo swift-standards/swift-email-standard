@@ -1,14 +1,14 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 
 import PackageDescription
 
 let package = Package(
     name: "swift-email-standard",
     platforms: [
-        .macOS("27"),
-        .iOS("27"),
-        .tvOS("27"),
-        .watchOS("27")
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
     ],
     products: [
         .library(
@@ -17,11 +17,14 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-emailaddress-standard.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-standards/swift-emailaddress-standard.git",
+            branch: "main"
+        ),
         .package(url: "https://github.com/swift-ietf/swift-rfc-2045.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-2046.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
-        .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main")
+        .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -31,13 +34,13 @@ let package = Package(
                 .product(name: "RFC 2045", package: "swift-rfc-2045"),
                 .product(name: "RFC 2046", package: "swift-rfc-2046"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
-                .product(name: "RFC 5322", package: "swift-rfc-5322")
-    ]
+                .product(name: "RFC 5322", package: "swift-rfc-5322"),
+            ]
         ),
         .testTarget(
             name: "Email Standard Tests",
             dependencies: [
-                "Email Standard",
+                "Email Standard"
             ]
         ),
     ],

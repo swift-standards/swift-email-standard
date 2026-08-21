@@ -7,7 +7,7 @@ struct `README Verification` {
 
     @Test
     func `Example from README: Simple HTML Email`() throws {
-        // From README line 36-44
+
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -23,7 +23,7 @@ struct `README Verification` {
 
     @Test
     func `Example from README: Plain Text Email`() throws {
-        // From README line 49-56
+
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -38,7 +38,7 @@ struct `README Verification` {
 
     @Test
     func `Example from README: Email with Text and HTML Alternatives`() throws {
-        // From README line 60-68
+
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),
@@ -55,7 +55,7 @@ struct `README Verification` {
 
     @Test
     func `Example from README: Email with Custom Headers`() throws {
-        // From README line 88-99
+
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),

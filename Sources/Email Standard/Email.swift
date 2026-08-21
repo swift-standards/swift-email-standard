@@ -3,78 +3,26 @@
 @_exported import RFC_2046
 @_exported import RFC_5322
 
-/// A type-safe email message
-///
-/// Represents a complete email message with addresses, subject, body content,
-/// and headers. Built on RFC standards for proper email formatting.
-///
-/// ## Example
-///
-/// ```swift
-/// // Simple HTML email
-/// let email = try Email(
-///     to: [EmailAddress("recipient@example.com")],
-///     from: EmailAddress("sender@example.com"),
-///     subject: "Hello!",
-///     html: "<h1>Hello, World!</h1>"
-/// )
-///
-/// // Email with text and HTML alternatives
-/// let email = try Email(
-///     to: [EmailAddress("recipient@example.com")],
-///     from: EmailAddress("sender@example.com"),
-///     subject: "Newsletter",
-///     text: "Plain text version",
-///     html: "<h1>HTML version</h1>"
-/// )
-/// ```
-///
-/// This module re-exports EmailAddress, RFC 2045, and RFC 2046 for convenience.
 public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
-    /// Recipient addresses
+
     public let to: [EmailAddress]
 
-    /// Sender address
     public let from: EmailAddress
 
-    /// Reply-to address (if different from sender)
     public let replyTo: EmailAddress?
 
-    /// Carbon copy addresses
     public let cc: [EmailAddress]?
 
-    /// Blind carbon copy addresses
     public let bcc: [EmailAddress]?
 
     public let date: RFC_5322.DateTime
 
-    /// Email subject line
     public let subject: String
 
-    /// Email body content
     public let body: Body
 
-    /// Additional custom headers
-    ///
-    /// These are supplemental headers beyond the typed properties (to, from, subject, etc.).
-    /// MIME headers (Content-Type, Content-Transfer-Encoding) are automatically determined
-    /// by the `body` property and should not be included here.
-    ///
-    /// Common use cases: X-Mailer, List-Unsubscribe, X-Priority, etc.
     public let additionalHeaders: [RFC_5322.Header]
 
-    /// Creates an email message
-    ///
-    /// - Parameters:
-    ///   - to: Recipient addresses (must not be empty)
-    ///   - from: Sender address
-    ///   - replyTo: Reply-to address (optional)
-    ///   - cc: Carbon copy addresses (optional)
-    ///   - bcc: Blind carbon copy addresses (optional)
-    ///   - subject: Email subject
-    ///   - body: Email body content
-    ///   - additionalHeaders: Additional custom headers (optional)
-    /// - Throws: `Email.Error.emptyRecipients` if the `to` array is empty
     public init(
         to: [EmailAddress],
         from: EmailAddress,
@@ -101,11 +49,6 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
         self.additionalHeaders = additionalHeaders
     }
 
-    /// All MIME headers including Content-Type
-    ///
-    /// Combines additional headers with MIME headers from the body.
-    /// MIME headers (Content-Type, Content-Transfer-Encoding) are automatically
-    /// determined from the `body` property.
     public var allHeaders: [RFC_5322.Header] {
         var result = additionalHeaders
         result[.contentType] = body.contentType.description
@@ -116,14 +59,12 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
     }
 }
 
-// MARK: - Error
-
 extension Email {
-    /// Email validation errors
+
     public enum Error: Swift.Error, Hashable, Sendable {
-        /// The recipient list is empty
+
         case emptyRecipients
-        /// A multipart body could not be constructed
+
         case multipart(RFC_2046.Multipart.Error)
     }
 }
@@ -140,45 +81,16 @@ extension Email.Error: CustomStringConvertible {
     }
 }
 
-// MARK: - Body
-
 extension Email {
-    /// Email body content
-    ///
-    /// Supports plain text, HTML, or multipart (text + HTML) content.
-    /// Content is stored as Data internally for efficiency, with String convenience methods.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// // Plain text (String convenience)
-    /// let body = Email.Body.text("Hello!")
-    ///
-    /// // HTML (String convenience)
-    /// let body = Email.Body.html("<h1>Hello!</h1>")
-    ///
-    /// // Direct Data usage
-    /// let body = Email.Body.textData(myData, charset: "UTF-8")
-    ///
-    /// // Text + HTML alternative
-    /// let body = try Email.Body.multipart(
-    ///     .alternative(
-    ///         textContent: "Hello!",
-    ///         htmlContent: "<h1>Hello!</h1>"
-    ///     )
-    /// )
-    /// ```
+
     public enum Body: Hashable, Sendable {
-        /// Plain text content (stored as UTF-8 encoded data)
+
         case text([UInt8], charset: RFC_2045.Charset)
 
-        /// HTML content (stored as UTF-8 encoded data)
         case html([UInt8], charset: RFC_2045.Charset)
 
-        /// Multipart message (text + HTML alternatives, attachments, etc.)
         case multipart(RFC_2046.Multipart)
 
-        /// The Content-Type for this body
         public var contentType: RFC_2045.ContentType {
             switch self {
             case .text(_, let charset):
@@ -202,21 +114,16 @@ extension Email {
             }
         }
 
-        /// The Content-Transfer-Encoding for this body (if needed)
         public var transferEncoding: RFC_2045.ContentTransferEncoding? {
             switch self {
             case .text, .html:
                 return .sevenBit
 
             case .multipart:
-                return nil  // Multipart doesn't have transfer encoding at top level
+                return nil
             }
         }
 
-        /// Renders the body content as a string
-        ///
-        /// For multipart bodies, this includes the complete MIME structure
-        /// with boundaries.
         public func render() -> String {
             switch self {
             case .text(let data, _):
@@ -230,12 +137,10 @@ extension Email {
             }
         }
 
-        /// The rendered body content
         public var content: String {
             render()
         }
 
-        /// The raw data content
         public var data: [UInt8] {
             switch self {
             case .text(let data, _), .html(let data, _):
@@ -248,15 +153,8 @@ extension Email {
     }
 }
 
-// MARK: - Body Convenience Constructors
-
 extension Email.Body {
-    /// Creates a plain text body from a String
-    ///
-    /// - Parameters:
-    ///   - content: The text content
-    ///   - charset: Character set (default: UTF-8)
-    /// - Returns: A text email body
+
     public static func text(
         _ content: some StringProtocol,
         charset: RFC_2045.Charset = .utf8
@@ -264,12 +162,6 @@ extension Email.Body {
         .text(Array(content.utf8), charset: charset)
     }
 
-    /// Creates an HTML body from a String
-    ///
-    /// - Parameters:
-    ///   - content: The HTML content
-    ///   - charset: Character set (default: UTF-8)
-    /// - Returns: An HTML email body
     public static func html(
         _ content: some StringProtocol,
         charset: RFC_2045.Charset = .utf8
@@ -277,62 +169,24 @@ extension Email.Body {
         .html(Array(content.utf8), charset: charset)
     }
 
-    /// Creates a plain text body from bytes
-    ///
-    /// - Parameters:
-    ///   - content: The text content as bytes
-    ///   - charset: Character set (default: UTF-8)
-    /// - Returns: A text email body
     public static func textData(_ content: [UInt8], charset: RFC_2045.Charset = .utf8) -> Self {
         .text(content, charset: charset)
     }
 
-    /// Creates an HTML body from bytes
-    ///
-    /// - Parameters:
-    ///   - content: The HTML content as bytes
-    ///   - charset: Character set (default: UTF-8)
-    /// - Returns: An HTML email body
     public static func htmlData(_ content: [UInt8], charset: RFC_2045.Charset = .utf8) -> Self {
         .html(content, charset: charset)
     }
 }
 
-// MARK: - ExpressibleByStringLiteral
-
 extension Email.Body: ExpressibleByStringLiteral {
-    /// Creates a plain text body from a string literal
-    ///
-    /// Enables convenient syntax: `body: "Hello, World!"` instead of `body: .text("Hello, World!")`
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let email = try Email(
-    ///     to: [EmailAddress("recipient@example.com")],
-    ///     from: EmailAddress("sender@example.com"),
-    ///     subject: "Test",
-    ///     body: "Hello, World!"  // Automatically becomes .text("Hello, World!")
-    /// )
-    /// ```
+
     public init(stringLiteral value: String) {
         self = .text(value)
     }
 }
 
-// MARK: - Convenience Initializers
-
 extension Email {
-    /// Creates an email with simple text content
-    ///
-    /// - Parameters:
-    ///   - to: Recipient addresses
-    ///   - from: Sender address
-    ///   - subject: Email subject
-    ///   - text: Plain text content
-    ///   - timestamp: Message timestamp
-    ///   - additionalHeaders: Additional headers
-    /// - Throws: `Email.Error.emptyRecipients` if the `to` array is empty
+
     public init(
         to: [EmailAddress],
         from: EmailAddress,
@@ -351,16 +205,6 @@ extension Email {
         )
     }
 
-    /// Creates an email with simple HTML content
-    ///
-    /// - Parameters:
-    ///   - to: Recipient addresses
-    ///   - from: Sender address
-    ///   - subject: Email subject
-    ///   - html: HTML content
-    ///   - timestamp: Message timestamp
-    ///   - additionalHeaders: Additional headers
-    /// - Throws: `Email.Error.emptyRecipients` if the `to` array is empty
     public init(
         to: [EmailAddress],
         from: EmailAddress,
@@ -379,17 +223,6 @@ extension Email {
         )
     }
 
-    /// Creates an email with both text and HTML content
-    ///
-    /// - Parameters:
-    ///   - to: Recipient addresses
-    ///   - from: Sender address
-    ///   - subject: Email subject
-    ///   - text: Plain text content
-    ///   - html: HTML content
-    ///   - timestamp: Message timestamp
-    ///   - additionalHeaders: Additional headers
-    /// - Throws: `Email.Error.emptyRecipients` if the `to` array is empty
     public init(
         to: [EmailAddress],
         from: EmailAddress,
@@ -416,12 +249,8 @@ extension Email {
     }
 }
 
-// MARK: - Protocol Conformances
-
 extension Email {
-    /// A debug description of the email
-    ///
-    /// Provides a summary showing sender, recipients, and subject for debugging contexts.
+
     public var debugDescription: String {
         let recipients = to.map(\.address).joined(separator: ", ")
         var parts = ["From: \(from.address)", "To: \(recipients)"]

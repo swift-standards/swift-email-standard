@@ -2,32 +2,7 @@ import RFC_2045
 import RFC_2046
 
 extension RFC_2046.Multipart {
-    /// Creates a multipart/alternative message (text + HTML)
-    ///
-    /// Commonly used for emails that provide both plain text and HTML versions.
-    /// Email clients display the last format they understand (typically HTML).
-    ///
-    /// Automatically generates a cryptographically random boundary using RFC 4648 hex encoding.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let multipart = try RFC_2046.Multipart.alternative(
-    ///     textContent: "Hello, World!",
-    ///     htmlContent: "<h1>Hello, World!</h1>"
-    /// )
-    /// ```
-    ///
-    /// ## RFC References
-    ///
-    /// - RFC 2046 Section 5.1.4: Multipart/Alternative subtype
-    /// - RFC 4648 Section 8: Base 16 (hex) encoding for boundary generation
-    ///
-    /// - Parameters:
-    ///   - textContent: Plain text version
-    ///   - htmlContent: HTML version
-    /// - Returns: A multipart/alternative message
-    /// - Throws: `RFC_2046.Multipart.Error` if validation fails
+
     public static func alternative(
         textContent: some StringProtocol,
         htmlContent: some StringProtocol
@@ -45,10 +20,7 @@ extension RFC_2046.Multipart {
                 ),
             ]
         } catch {
-            // BodyPart's convenience init throws `RFC_2046.BodyPart.Headers.Error`,
-            // which is nested inside `Multipart.Error.invalidBodyPart(_:)`'s String
-            // payload — mirrors the `.header`/`.address`/`.multipart` catch-and-wrap
-            // pattern used in Email+RFC5322.swift and Email.swift.
+
             throw .invalidBodyPart(error.description)
         }
         return try Self(
@@ -58,30 +30,6 @@ extension RFC_2046.Multipart {
         )
     }
 
-    /// Creates a multipart/mixed message
-    ///
-    /// Used for independent parts that should be presented in sequence.
-    /// Common use case: email body with file attachments.
-    ///
-    /// Automatically generates a cryptographically random boundary using RFC 4648 hex encoding.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let multipart = try RFC_2046.Multipart.mixed(
-    ///     parts: [textPart, attachmentPart]
-    /// )
-    /// ```
-    ///
-    /// ## RFC References
-    ///
-    /// - RFC 2046 Section 5.1.3: Multipart/Mixed subtype
-    /// - RFC 4648 Section 8: Base 16 (hex) encoding for boundary generation
-    ///
-    /// - Parameters:
-    ///   - parts: Body parts in order
-    /// - Returns: A multipart/mixed message
-    /// - Throws: `RFC_2046.Multipart.Error` if validation fails
     public static func mixed(
         parts: [RFC_2046.BodyPart]
     ) throws(Error) -> Self {

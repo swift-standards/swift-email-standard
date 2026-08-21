@@ -1,52 +1,23 @@
-//
-//  Email+RFC5322.swift
-//  swift-email-standard
-//
-//  Created by Coen ten Thije Boonkkamp on 12/11/2025.
-//
-
 import EmailAddress_Standard
 import RFC_4648
 import RFC_5322
 
-// MARK: - Conversion Error
-
 extension Email {
-    /// Errors that can occur when converting an `Email` to an `RFC_5322.Message`.
+
     public enum ConversionError: Swift.Error, Sendable {
-        /// An email address could not be converted to RFC 5322 format.
+
         case address(EmailAddress.Error)
-        /// A header value could not be constructed.
+
         case header(RFC_5322.Header.Value.Error)
-        /// The message could not be constructed (subject/MIME-version validation).
+
         case message(RFC_5322.Message.Error)
     }
 }
 
 extension RFC_5322.Message {
-    /// Creates an RFC 5322 Message from an Email
-    ///
-    /// Converts the high-level Email composition type to the wire-format RFC 5322 Message.
-    /// This enables serialization of Email instances to .eml files.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let email = try Email(
-    ///     to: [EmailAddress("recipient@example.com")],
-    ///     from: EmailAddress("sender@example.com"),
-    ///     subject: "Hello",
-    ///     html: "<h1>Hello, World!</h1>"
-    /// )
-    ///
-    /// let message = try RFC_5322.Message(from: email)
-    /// let emlContent = message.render()
-    /// ```
-    ///
-    /// - Parameter email: The Email to convert
-    /// - Throws: If email addresses cannot be parsed or email is invalid
+
     public init(from email: Email) throws(Email.ConversionError) {
-        // Convert from EmailAddress to RFC_5322.EmailAddress
+
         let from: RFC_5322.EmailAddress
         let to: [RFC_5322.EmailAddress]
         let cc: [RFC_5322.EmailAddress]?
@@ -60,7 +31,6 @@ extension RFC_5322.Message {
                 try RFC_5322.EmailAddress(addr)
             }
 
-            // Convert optional CC addresses
             cc = try email.cc.map {
                 (ccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
                 try ccList.map {
@@ -69,7 +39,6 @@ extension RFC_5322.Message {
                 }
             }
 
-            // Convert optional BCC addresses
             bcc = try email.bcc.map {
                 (bccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.EmailAddress] in
                 try bccList.map {
@@ -78,7 +47,6 @@ extension RFC_5322.Message {
                 }
             }
 
-            // Convert optional Reply-To address
             replyTo = try email.replyTo.map {
                 (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.EmailAddress in
                 try RFC_5322.EmailAddress(addr)
@@ -87,23 +55,17 @@ extension RFC_5322.Message {
             throw .address(error)
         }
 
-        // Generate Message-ID if not provided in additional headers
-        // Generate a unique ID from random bytes encoded as hex
         let randomBytes = (0..<16).map { _ in Byte(UInt8.random(in: 0...255)) }
         let hexBytes: [ASCII.Code] = RFC_4648.Hex.encode(randomBytes, uppercase: false)
         let uniqueId = String(decoding: hexBytes, as: UTF8.self)
-        // Use the sender's domain for the Message-ID domain part
+
         let domain = from.domain
         let messageId = RFC_5322.Message.ID(uniqueId: uniqueId, domain: domain)
 
-        // Get body data
         let bodyData = email.body.data
 
-        // Prepare headers (exclude Message-ID as it's a dedicated field)
         var additionalHeaders = email.additionalHeaders.filter { $0.name != .messageId }
 
-        // Add MIME headers from body
-        // Convert content type description to header value
         do {
             let contentTypeValue = try RFC_5322.Header.Value(
                 ascii: [Byte](email.body.contentType.description.utf8)
@@ -128,7 +90,7 @@ extension RFC_5322.Message {
                 from: from,
                 to: to,
                 cc: cc,
-                bcc: bcc,  // Stored for SMTP envelope; excluded from rendered message headers
+                bcc: bcc,
                 replyTo: replyTo,
                 date: email.date,
                 subject: email.subject,

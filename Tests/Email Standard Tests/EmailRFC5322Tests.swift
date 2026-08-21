@@ -1,10 +1,3 @@
-//
-//  EmailRFC5322Tests.swift
-//  swift-email-standard
-//
-//  Created by Coen ten Thije Boonkkamp on 12/11/2025.
-//
-
 import Testing
 
 @testable import Email_Standard
@@ -19,7 +12,7 @@ struct `Email to RFC 5322 Message Conversion` {
             from: EmailAddress("sender@example.com"),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test Email",
-            body: "Hello, World!"  // ExpressibleByStringLiteral
+            body: "Hello, World!"
         )
 
         let message = try RFC_5322.Message(from: email)
@@ -156,12 +149,11 @@ struct `Email to RFC 5322 Message Conversion` {
         let message = try RFC_5322.Message(from: email)
         let emlContent = String(message)
 
-        // Verify .eml format
         #expect(emlContent.contains("From: "))
         #expect(emlContent.contains("To: "))
         #expect(emlContent.contains("Subject: "))
         #expect(emlContent.contains("Date: "))
         #expect(emlContent.contains("Message-ID: "))
-        #expect(emlContent.contains("\r\n\r\n"))  // Headers/body separator
+        #expect(emlContent.contains("\r\n\r\n"))
     }
 }

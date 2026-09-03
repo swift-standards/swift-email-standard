@@ -40,17 +40,12 @@ let package = Package(
         .testTarget(
             name: "Email Standard Tests",
             dependencies: [
-                "Email Standard"
+                .target(name: "Email Standard")
             ]
         ),
     ],
     swiftLanguageModes: [.v6]
 )
-
-extension String {
-    var tests: Self { self + " Tests" }
-    var foundation: Self { self + " Foundation" }
-}
 
 for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
     let ecosystem: [SwiftSetting] = [

@@ -1,6 +1,11 @@
+import Binary
+import Byte
+import Email_Standard
+import EmailAddress_Standard
+import RFC_2046
+import RFC_5322
+import RFC_5322_Coder
 import Testing
-
-@testable import Email_Standard
 
 @Suite
 struct `Email to RFC 5322 Message Conversion` {
@@ -106,7 +111,7 @@ struct `Email to RFC 5322 Message Conversion` {
             additionalHeaders: [
                 .init(
                     name: .init(__unchecked: (), rawValue: "X-Custom-Header"),
-                    value: try .init(ascii: Array("custom-value".utf8))
+                    value: try .init("custom-value")
                 ),
                 .init(name: .xPriority, value: 1),
             ]
@@ -137,7 +142,7 @@ struct `Email to RFC 5322 Message Conversion` {
     }
 
     @Test
-    func `Can write message to .eml file`() throws {
+    func `Rendered message carries the envelope headers and the header-body separator`() throws {
         let email = try Email(
             to: [EmailAddress("recipient@example.com")],
             from: EmailAddress("sender@example.com"),

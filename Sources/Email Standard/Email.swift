@@ -1,7 +1,9 @@
-@_exported import EmailAddress_Standard
-@_exported import RFC_2045
-@_exported import RFC_2046
-@_exported import RFC_5322
+public import Byte
+public import EmailAddress_Standard
+public import RFC_2045
+public import RFC_2046
+public import RFC_5322
+import RFC_2045_Coder
 
 public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
 
@@ -85,9 +87,9 @@ extension Email {
 
     public enum Body: Hashable, Sendable {
 
-        case text([UInt8], charset: RFC_2045.Charset)
+        case text([Byte], charset: RFC_2045.Charset)
 
-        case html([UInt8], charset: RFC_2045.Charset)
+        case html([Byte], charset: RFC_2045.Charset)
 
         case multipart(RFC_2046.Multipart)
 
@@ -123,33 +125,6 @@ extension Email {
                 return nil
             }
         }
-
-        public func render() -> String {
-            switch self {
-            case .text(let data, _):
-                return String(decoding: data, as: UTF8.self)
-
-            case .html(let data, _):
-                return String(decoding: data, as: UTF8.self)
-
-            case .multipart(let multipart):
-                return String(multipart)
-            }
-        }
-
-        public var content: String {
-            render()
-        }
-
-        public var data: [UInt8] {
-            switch self {
-            case .text(let data, _), .html(let data, _):
-                return data
-
-            case .multipart(let multipart):
-                return [UInt8](multipart)
-            }
-        }
     }
 }
 
@@ -159,21 +134,21 @@ extension Email.Body {
         _ content: some StringProtocol,
         charset: RFC_2045.Charset = .utf8
     ) -> Self {
-        .text(Array(content.utf8), charset: charset)
+        .text(content.utf8.map(Byte.init(bitPattern:)), charset: charset)
     }
 
     public static func html(
         _ content: some StringProtocol,
         charset: RFC_2045.Charset = .utf8
     ) -> Self {
-        .html(Array(content.utf8), charset: charset)
+        .html(content.utf8.map(Byte.init(bitPattern:)), charset: charset)
     }
 
-    public static func textData(_ content: [UInt8], charset: RFC_2045.Charset = .utf8) -> Self {
+    public static func textData(_ content: [Byte], charset: RFC_2045.Charset = .utf8) -> Self {
         .text(content, charset: charset)
     }
 
-    public static func htmlData(_ content: [UInt8], charset: RFC_2045.Charset = .utf8) -> Self {
+    public static func htmlData(_ content: [Byte], charset: RFC_2045.Charset = .utf8) -> Self {
         .html(content, charset: charset)
     }
 }
@@ -268,91 +243,5 @@ extension Email {
         parts.append("Subject: \"\(subject)\"")
 
         return parts.joined(separator: " ")
-    }
-}
-
-extension Email: Codable {
-    enum CodingKeys: String, CodingKey {
-        case to, from, replyTo, cc, bcc, date, subject, body, additionalHeaders
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.to = try container.decode([EmailAddress].self, forKey: .to)
-        self.from = try container.decode(EmailAddress.self, forKey: .from)
-        self.replyTo = try container.decodeIfPresent(EmailAddress.self, forKey: .replyTo)
-        self.cc = try container.decodeIfPresent([EmailAddress].self, forKey: .cc)
-        self.bcc = try container.decodeIfPresent([EmailAddress].self, forKey: .bcc)
-        self.date = try container.decode(RFC_5322.DateTime.self, forKey: .date)
-        self.subject = try container.decode(String.self, forKey: .subject)
-        self.body = try container.decode(Body.self, forKey: .body)
-        self.additionalHeaders = try container.decode(
-            [RFC_5322.Header].self,
-            forKey: .additionalHeaders
-        )
-    }
-
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(to, forKey: .to)
-        try container.encode(from, forKey: .from)
-        try container.encodeIfPresent(replyTo, forKey: .replyTo)
-        try container.encodeIfPresent(cc, forKey: .cc)
-        try container.encodeIfPresent(bcc, forKey: .bcc)
-        try container.encode(date, forKey: .date)
-        try container.encode(subject, forKey: .subject)
-        try container.encode(body, forKey: .body)
-        try container.encode(additionalHeaders, forKey: .additionalHeaders)
-    }
-}
-
-extension Email.Body: Codable {
-    enum CodingKeys: String, CodingKey {
-        case type, content, charset, multipart
-    }
-
-    enum BodyType: String, Codable {
-        case text, html, multipart
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let type = try container.decode(BodyType.self, forKey: .type)
-
-        switch type {
-        case .text:
-            let content = try container.decode([UInt8].self, forKey: .content)
-            let charset = try container.decode(RFC_2045.Charset.self, forKey: .charset)
-            self = .text(content, charset: charset)
-
-        case .html:
-            let content = try container.decode([UInt8].self, forKey: .content)
-            let charset = try container.decode(RFC_2045.Charset.self, forKey: .charset)
-            self = .html(content, charset: charset)
-
-        case .multipart:
-            let multipart = try container.decode(RFC_2046.Multipart.self, forKey: .multipart)
-            self = .multipart(multipart)
-        }
-    }
-
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        switch self {
-        case .text(let data, let charset):
-            try container.encode(BodyType.text, forKey: .type)
-            try container.encode(data, forKey: .content)
-            try container.encode(charset, forKey: .charset)
-
-        case .html(let data, let charset):
-            try container.encode(BodyType.html, forKey: .type)
-            try container.encode(data, forKey: .content)
-            try container.encode(charset, forKey: .charset)
-
-        case .multipart(let multipart):
-            try container.encode(BodyType.multipart, forKey: .type)
-            try container.encode(multipart, forKey: .multipart)
-        }
     }
 }

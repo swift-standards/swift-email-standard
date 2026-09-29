@@ -1,6 +1,10 @@
+import Binary
+import Byte
+import Email_Standard
+import EmailAddress_Standard
+import RFC_5322
+import RFC_5322_Coder
 import Testing
-
-@testable import Email_Standard
 
 @Suite
 struct `README Verification` {
@@ -32,8 +36,10 @@ struct `README Verification` {
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
         )
 
+        let message = try RFC_5322.Message(from: email)
+
         #expect(email.subject == "Hello")
-        #expect(email.body.content.contains("Hello, World!"))
+        #expect(String(decoding: message.body, as: UTF8.self) == "Hello, World!")
     }
 
     @Test
@@ -48,9 +54,13 @@ struct `README Verification` {
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
         )
 
+        let message = try RFC_5322.Message(from: email)
+        let rendered = String(message)
+
         #expect(email.subject == "Newsletter")
-        #expect(email.body.content.contains("Plain text version"))
-        #expect(email.body.content.contains("<h1>HTML version</h1>"))
+        #expect(rendered.contains("Content-Type: multipart/alternative"))
+        #expect(rendered.contains("Plain text version of newsletter"))
+        #expect(rendered.contains("<h1>HTML version</h1>"))
     }
 
     @Test
@@ -65,11 +75,11 @@ struct `README Verification` {
             additionalHeaders: [
                 .init(
                     name: .init(__unchecked: (), rawValue: "X-Campaign-ID"),
-                    value: try .init(ascii: Array("newsletter-2024".utf8))
+                    value: try .init("newsletter-2024")
                 ),
                 .init(
                     name: .xMailer,
-                    value: try .init(ascii: Array("MyApp 1.0".utf8))
+                    value: try .init("MyApp 1.0")
                 ),
             ]
         )

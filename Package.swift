@@ -22,6 +22,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-ietf/swift-rfc-6531.git", branch: "main"),
         .package(
             url: "https://github.com/swift-standards/swift-emailaddress-standard.git",
             branch: "main"
@@ -42,6 +43,7 @@ let package = Package(
             name: "Email Standard",
             dependencies: [
                 .product(name: "EmailAddress Standard", package: "swift-emailaddress-standard"),
+                .product(name: "RFC 6531", package: "swift-rfc-6531"),
                 .product(name: "RFC 2045", package: "swift-rfc-2045"),
                 .product(name: "RFC 2045 Coder", package: "swift-rfc-2045-coder"),
                 .product(name: "RFC 2046", package: "swift-rfc-2046"),
@@ -73,6 +75,7 @@ let package = Package(
         .testTarget(
             name: "Email Standard Tests",
             dependencies: [
+                .product(name: "RFC 6531", package: "swift-rfc-6531"),
                 .target(name: "Email Standard"),
                 .product(name: "EmailAddress Standard", package: "swift-emailaddress-standard"),
                 .product(name: "RFC 2046", package: "swift-rfc-2046"),
@@ -86,6 +89,7 @@ let package = Package(
         .testTarget(
             name: "Email Foundation Integration Tests",
             dependencies: [
+                .product(name: "RFC 6531", package: "swift-rfc-6531"),
                 .target(name: "Email Standard"),
                 .target(name: "Email Foundation Integration"),
                 .product(name: "EmailAddress Standard", package: "swift-emailaddress-standard"),

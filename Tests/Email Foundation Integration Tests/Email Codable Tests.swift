@@ -1,3 +1,4 @@
+import RFC_6531
 import Email_Foundation_Integration
 import Email_Standard
 import EmailAddress_Standard
@@ -12,8 +13,8 @@ struct `Email Codable` {
     @Test
     func `A text email survives a JSON round trip`() throws {
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             subject: "Welcome!",
             text: "Hello, World!",
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
@@ -33,8 +34,8 @@ struct `Email Codable` {
         )
 
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Newsletter",
             body: .multipart(multipart)

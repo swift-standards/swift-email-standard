@@ -1,3 +1,4 @@
+import RFC_6531
 import Binary
 import Byte
 import Email_Standard
@@ -13,8 +14,8 @@ struct `README Verification` {
     func `Example from README: Simple HTML Email`() throws {
 
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             subject: "Welcome!",
             html: "<h1>Welcome to our service!</h1>",
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
@@ -29,8 +30,8 @@ struct `README Verification` {
     func `Example from README: Plain Text Email`() throws {
 
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             subject: "Hello",
             text: "Hello, World!",
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200)
@@ -46,8 +47,8 @@ struct `README Verification` {
     func `Example from README: Email with Text and HTML Alternatives`() throws {
 
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             subject: "Newsletter",
             text: "Plain text version of newsletter",
             html: "<h1>HTML version</h1><p>Newsletter content...</p>",
@@ -67,8 +68,8 @@ struct `README Verification` {
     func `Example from README: Email with Custom Headers`() throws {
 
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             subject: "Tracked Email",
             html: "<h1>Hello!</h1>",
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),

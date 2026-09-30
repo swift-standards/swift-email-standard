@@ -1,3 +1,4 @@
+public import RFC_6531
 public import EmailAddress_Standard
 public import RFC_5322
 import ASCII
@@ -11,7 +12,7 @@ extension Email {
 
     public enum ConversionError: Swift.Error, Sendable {
 
-        case address(EmailAddress.Error)
+        case address(RFC_6531.Mailbox.ConversionError)
 
         case header(RFC_5322.Header.Value.Error)
 
@@ -32,28 +33,28 @@ extension RFC_5322.Message {
         do {
             from = try RFC_5322.Mailbox(email.from)
             to = try email.to.map {
-                (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.Mailbox in
+                (addr: EmailAddress) throws(RFC_6531.Mailbox.ConversionError) -> RFC_5322.Mailbox in
                 try RFC_5322.Mailbox(addr)
             }
 
             cc = try email.cc.map {
-                (ccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.Mailbox] in
+                (ccList: [EmailAddress]) throws(RFC_6531.Mailbox.ConversionError) -> [RFC_5322.Mailbox] in
                 try ccList.map {
-                    (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.Mailbox in
+                    (addr: EmailAddress) throws(RFC_6531.Mailbox.ConversionError) -> RFC_5322.Mailbox in
                     try RFC_5322.Mailbox(addr)
                 }
             }
 
             bcc = try email.bcc.map {
-                (bccList: [EmailAddress]) throws(EmailAddress.Error) -> [RFC_5322.Mailbox] in
+                (bccList: [EmailAddress]) throws(RFC_6531.Mailbox.ConversionError) -> [RFC_5322.Mailbox] in
                 try bccList.map {
-                    (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.Mailbox in
+                    (addr: EmailAddress) throws(RFC_6531.Mailbox.ConversionError) -> RFC_5322.Mailbox in
                     try RFC_5322.Mailbox(addr)
                 }
             }
 
             replyTo = try email.replyTo.map {
-                (addr: EmailAddress) throws(EmailAddress.Error) -> RFC_5322.Mailbox in
+                (addr: EmailAddress) throws(RFC_6531.Mailbox.ConversionError) -> RFC_5322.Mailbox in
                 try RFC_5322.Mailbox(addr)
             }
         } catch {

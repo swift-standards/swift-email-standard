@@ -1,3 +1,4 @@
+import RFC_6531
 import Binary
 import Byte
 import Email_Standard
@@ -13,8 +14,8 @@ struct `Email to RFC 5322 Message Conversion` {
     @Test
     func `Convert simple text email to RFC 5322 Message`() throws {
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test Email",
             body: "Hello, World!"
@@ -38,8 +39,8 @@ struct `Email to RFC 5322 Message Conversion` {
     @Test
     func `Convert HTML email to RFC 5322 Message`() throws {
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "HTML Test",
             body: .html("<h1>Hello, World!</h1>")
@@ -62,8 +63,8 @@ struct `Email to RFC 5322 Message Conversion` {
         )
 
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Multipart Test",
             body: .multipart(multipart)
@@ -80,10 +81,10 @@ struct `Email to RFC 5322 Message Conversion` {
     @Test
     func `Convert email with CC and Reply-To`() throws {
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
-            replyTo: EmailAddress("reply@example.com"),
-            cc: [EmailAddress("cc@example.com")],
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
+            replyTo: EmailAddress(rfc6531: try RFC_6531.Mailbox("reply@example.com")),
+            cc: [EmailAddress(rfc6531: try RFC_6531.Mailbox("cc@example.com"))],
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test with CC",
             body: "Test body"
@@ -103,8 +104,8 @@ struct `Email to RFC 5322 Message Conversion` {
     @Test
     func `Convert email with custom headers`() throws {
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test",
             body: "Test",
@@ -127,8 +128,8 @@ struct `Email to RFC 5322 Message Conversion` {
     @Test
     func `Message-ID is generated if not provided`() throws {
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test",
             body: "Test"
@@ -144,8 +145,8 @@ struct `Email to RFC 5322 Message Conversion` {
     @Test
     func `Rendered message carries the envelope headers and the header-body separator`() throws {
         let email = try Email(
-            to: [EmailAddress("recipient@example.com")],
-            from: EmailAddress("sender@example.com"),
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
             date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
             subject: "Test Email",
             body: "Hello, World!"

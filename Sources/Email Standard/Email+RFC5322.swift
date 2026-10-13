@@ -1,5 +1,5 @@
 public import RFC_6531
-public import EmailAddress_Standard
+import EmailAddress_Standard
 public import RFC_5322
 import ASCII
 import Byte
@@ -10,7 +10,7 @@ import RFC_4648
 
 extension Email {
 
-    public enum ConversionError: Swift.Error, Sendable {
+    public enum ConversionError: Swift::Error, Sendable {
 
         case address(RFC_6531.Mailbox.ConversionError)
 

@@ -63,7 +63,7 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
 
 extension Email {
 
-    public enum Error: Swift.Error, Hashable, Sendable {
+    public enum Error: Swift::Error, Hashable, Sendable {
 
         case emptyRecipients
 

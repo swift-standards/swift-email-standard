@@ -1,5 +1,5 @@
-public import Email_Standard
 import Byte
+public import Email_Standard
 import RFC_2045
 import RFC_2045_Foundation_Integration
 import RFC_2046

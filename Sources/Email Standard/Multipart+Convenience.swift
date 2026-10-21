@@ -1,5 +1,5 @@
-public import RFC_2046
 import RFC_2045
+public import RFC_2046
 
 extension RFC_2046.Multipart {
 

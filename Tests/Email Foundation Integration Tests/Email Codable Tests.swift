@@ -1,10 +1,10 @@
-import RFC_6531
+import EmailAddress_Standard
 import Email_Foundation_Integration
 import Email_Standard
-import EmailAddress_Standard
 import Foundation
 import RFC_2046
 import RFC_5322
+import RFC_6531
 import Testing
 
 @Suite

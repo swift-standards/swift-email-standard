@@ -1,10 +1,10 @@
-import RFC_6531
 import Binary
 import Byte
-import Email_Standard
 import EmailAddress_Standard
+import Email_Standard
 import RFC_5322
 import RFC_5322_Coder
+import RFC_6531
 import Testing
 
 @Suite

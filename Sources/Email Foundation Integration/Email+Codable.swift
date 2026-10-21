@@ -1,6 +1,6 @@
-public import Email_Standard
 import EmailAddress_Foundation_Integration
 import EmailAddress_Standard
+public import Email_Standard
 import RFC_5322
 import RFC_5322_Foundation_Integration
 

@@ -1,12 +1,12 @@
-public import RFC_6531
-import EmailAddress_Standard
-public import RFC_5322
 import ASCII
 import Byte
+import EmailAddress_Standard
 import RFC_2045
 import RFC_2045_Coder
 import RFC_2046_Coder
 import RFC_4648
+public import RFC_5322
+public import RFC_6531
 
 extension Email {
 

@@ -1,9 +1,9 @@
 public import Byte
 public import EmailAddress_Standard
 public import RFC_2045
+import RFC_2045_Coder
 public import RFC_2046
 public import RFC_5322
-import RFC_2045_Coder
 
 public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
 

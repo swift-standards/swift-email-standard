@@ -82,7 +82,6 @@ let package = Package(
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),
                 .product(name: "RFC 5322 Coder", package: "swift-rfc-5322-coder"),
                 .product(name: "Byte", package: "swift-byte"),
-                .product(name: "Byte", package: "swift-byte"),
                 .product(name: "Binary", package: "swift-binary"),
             ]
         ),

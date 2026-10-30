@@ -30,8 +30,7 @@ let package = Package(
         .package(url: "https://github.com/swift-ietf/swift-rfc-2045.git", branch: "main", traits: ["Coder"]),
         .package(url: "https://github.com/swift-ietf/swift-rfc-2046.git", branch: "main", traits: ["Coder"]),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
-        .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
-        .package(url: "https://github.com/swift-ietf/swift-rfc-5322-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main", traits: ["Coder"]),
         .package(url: "https://github.com/swift-atoms/swift-ascii.git", branch: "main", traits: ["Coder", "Parser", "Serializer"]),
         .package(url: "https://github.com/swift-atoms/swift-byte.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-binary.git", branch: "main", traits: ["Serializer"]),
@@ -76,7 +75,6 @@ let package = Package(
                 .product(name: "EmailAddress Standard", package: "swift-emailaddress-standard"),
                 .product(name: "RFC 2046", package: "swift-rfc-2046"),
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),
-                .product(name: "RFC 5322 Coder", package: "swift-rfc-5322-coder"),
                 .product(name: "Byte", package: "swift-byte"),
                 .product(name: "Binary", package: "swift-binary"),
             ]

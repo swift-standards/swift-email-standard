@@ -115,10 +115,11 @@ extension Email {
             }
         }
 
+        /// `7bit` when every byte of a text or HTML body is ASCII, `8bit` otherwise.
         public var transferEncoding: RFC_2045.ContentTransferEncoding? {
             switch self {
-            case .text, .html:
-                return .sevenBit
+            case .text(let bytes, _), .html(let bytes, _):
+                return bytes.allSatisfy { $0.bitPattern < 0x80 } ? .sevenBit : .eightBit
 
             case .multipart:
                 return nil

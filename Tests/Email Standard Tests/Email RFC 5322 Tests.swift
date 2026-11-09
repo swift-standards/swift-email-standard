@@ -142,6 +142,60 @@ struct `Email to RFC 5322 Message Conversion` {
     }
 
     @Test
+    func `Message-ID from additional headers is kept`() throws {
+        let email = try Email(
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
+            subject: "Test",
+            body: "Test",
+            additionalHeaders: [
+                .init(name: .messageId, value: try .init("<thread-42@example.org>"))
+            ]
+        )
+
+        let message = try RFC_5322.Message(from: email)
+
+        #expect(message.messageId.description == "<thread-42@example.org>")
+        let rendered = String(message)
+        #expect(rendered.split(separator: "\r\n").filter { $0.hasPrefix("Message-ID:") }.count == 1)
+    }
+
+    @Test
+    func `Invalid Message-ID in additional headers is refused`() throws {
+        let email = try Email(
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
+            subject: "Test",
+            body: "Test",
+            additionalHeaders: [
+                .init(name: .messageId, value: try .init("no-at-sign"))
+            ]
+        )
+
+        #expect(throws: Email.ConversionError.self) {
+            try RFC_5322.Message(from: email)
+        }
+    }
+
+    @Test
+    func `Non-ASCII text body is declared 8bit in the rendered message`() throws {
+        let email = try Email(
+            to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],
+            from: EmailAddress(rfc6531: try RFC_6531.Mailbox("sender@example.com")),
+            date: RFC_5322.DateTime(secondsSinceEpoch: 1_609_459_200),
+            subject: "Test",
+            body: .text("Grüße")
+        )
+
+        let rendered = String(try RFC_5322.Message(from: email))
+
+        #expect(rendered.contains("Content-Transfer-Encoding: 8bit"))
+        #expect(!rendered.contains("Content-Transfer-Encoding: 7bit"))
+    }
+
+    @Test
     func `Rendered message carries the envelope headers and the header-body separator`() throws {
         let email = try Email(
             to: [EmailAddress(rfc6531: try RFC_6531.Mailbox("recipient@example.com"))],

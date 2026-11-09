@@ -23,6 +23,8 @@ extension Email {
 
 extension RFC_5322.Message {
 
+    /// Converts an email to a message. A `Message-ID` among the email's additional headers becomes
+    /// the message's ID; without one, a random ID at the sender's domain is generated.
     public init(from email: Email) throws(Email.ConversionError) {
 
         let from: RFC_5322.Mailbox
@@ -62,14 +64,16 @@ extension RFC_5322.Message {
             throw .address(error)
         }
 
-        let randomBytes = (0..<16).map { _ in Byte(bitPattern: UInt8.random(in: 0...255)) }
-        let hexBytes: [ASCII.Code] = RFC_4648.Base16.encode(randomBytes, uppercase: false)
-        let uniqueId = String(decoding: hexBytes.lazy.map(\.underlying), as: UTF8.self)
-
-        let domain = from.domain
         let messageId: RFC_5322.Message.ID
         do throws(RFC_5322.Message.ID.Error) {
-            messageId = try RFC_5322.Message.ID(uniqueId: uniqueId, domain: domain)
+            if let supplied = email.additionalHeaders[.messageId] {
+                messageId = try RFC_5322.Message.ID(supplied.rawValue)
+            } else {
+                let randomBytes = (0..<16).map { _ in Byte(bitPattern: UInt8.random(in: 0...255)) }
+                let hexBytes: [ASCII.Code] = RFC_4648.Base16.encode(randomBytes, uppercase: false)
+                let uniqueId = String(decoding: hexBytes.lazy.map(\.underlying), as: UTF8.self)
+                messageId = try RFC_5322.Message.ID(uniqueId: uniqueId, domain: from.domain)
+            }
         } catch {
             throw .messageID(error)
         }

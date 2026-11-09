@@ -4,7 +4,7 @@ Use this package when you compose an email message and need it as an RFC 5322 me
 
 ## Laws
 
-- Text and HTML bodies default to UTF-8. Their content type is `text/plain` or `text/html` with that charset, and their transfer encoding is always declared as 7bit. The bytes are passed through as given and are never transfer-encoded.
+- Text and HTML bodies default to UTF-8. Their content type is `text/plain` or `text/html` with that charset, and their transfer encoding is declared as 7bit when every byte is ASCII and 8bit otherwise. The bytes are passed through as given and are never transfer-encoded.
 - A text and HTML email becomes a `multipart/alternative` body with the plain text part first and the HTML part second. `RFC_2046.Multipart.alternative(textContent:htmlContent:)` and `RFC_2046.Multipart.mixed(parts:)` pick a new random boundary on every call.
-- `RFC_5322.Message.init(from:)` generates a new random Message-ID on every conversion, using the domain of the sender's address. It also adds the body's Content-Type and Content-Transfer-Encoding headers.
+- `RFC_5322.Message.init(from:)` uses a Message-ID from the email's additional headers, and throws if it is invalid; without one it generates a new random Message-ID on every conversion, using the domain of the sender's address. It also adds the body's Content-Type and Content-Transfer-Encoding headers.
 - With `Email Foundation Integration`, a body encodes with a `type` of `text`, `html` or `multipart`. Text and HTML content encodes as an array of byte values with its `charset`, not as a string.

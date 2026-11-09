@@ -85,9 +85,9 @@ struct `README Verification` {
         )
 
         #expect(
-            email.additionalHeaders[.init(__unchecked: (), rawValue: "X-Campaign-ID")]
+            email.additionalHeaders[.init(__unchecked: (), rawValue: "X-Campaign-ID")]?.rawValue
                 == "newsletter-2024"
         )
-        #expect(email.additionalHeaders[.xMailer] == "MyApp 1.0")
+        #expect(email.additionalHeaders[.xMailer]?.rawValue == "MyApp 1.0")
     }
 }

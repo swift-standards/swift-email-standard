@@ -16,6 +16,8 @@ extension Email {
         case header(RFC_5322.Header.Value.Error)
 
         case message(RFC_5322.Message.Error)
+
+        case messageID(RFC_5322.Message.ID.Error)
     }
 }
 
@@ -65,7 +67,12 @@ extension RFC_5322.Message {
         let uniqueId = String(decoding: hexBytes.lazy.map(\.underlying), as: UTF8.self)
 
         let domain = from.domain
-        let messageId = RFC_5322.Message.ID(uniqueId: uniqueId, domain: domain)
+        let messageId: RFC_5322.Message.ID
+        do throws(RFC_5322.Message.ID.Error) {
+            messageId = try RFC_5322.Message.ID(uniqueId: uniqueId, domain: domain)
+        } catch {
+            throw .messageID(error)
+        }
 
         let bodyData = email.body.bytes
 

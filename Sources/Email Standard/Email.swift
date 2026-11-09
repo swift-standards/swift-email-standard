@@ -52,9 +52,9 @@ public struct Email: Hashable, Sendable, CustomDebugStringConvertible {
 
     public var allHeaders: [RFC_5322.Header] {
         var result = additionalHeaders
-        result[.contentType] = body.contentType.description
+        result[.contentType] = RFC_5322.Header.Value(rawValue: body.contentType.description)
         if let encoding = body.transferEncoding {
-            result[.contentTransferEncoding] = encoding.description
+            result[.contentTransferEncoding] = RFC_5322.Header.Value(rawValue: encoding.description)
         }
         return result
     }
